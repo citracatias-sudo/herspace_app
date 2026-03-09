@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../widgets/app_background.dart';
 import '../widgets/soft_card.dart';
 import '../models/user_model.dart';
+import 'chat_screen.dart';
+import 'mood_tracker_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final UserModel user;
@@ -29,7 +31,7 @@ class HomeScreen extends StatelessWidget {
                   SoftCard(
                     child: ListTile(
                       leading: Icon(Icons.chat_bubble_outline),
-                      title: Text("Anonymous Chat"),
+                      title: Text("Have Chat"),
                       subtitle: Text("Share your thoughts"),
                       trailing: Icon(Icons.arrow_forward_ios),
                     ),
@@ -41,6 +43,14 @@ class HomeScreen extends StatelessWidget {
                       title: Text("Mood Tracker"),
                       subtitle: Text("Track your feelings"),
                       trailing: Icon(Icons.arrow_forward_ios),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MoodTrackerScreen(),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ] else ...[
@@ -50,6 +60,12 @@ class HomeScreen extends StatelessWidget {
                       title: Text("Listener Dashboard"),
                       subtitle: Text("Help people who need support"),
                       trailing: Icon(Icons.arrow_forward_ios),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ChatScreen()),
+                        );
+                      },
                     ),
                   ),
                 ],

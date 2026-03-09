@@ -1,15 +1,20 @@
 import '../models/user_model.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import '../models/mood_model.dart';
 
 class DBHelper {
   static Future<Database> db() async {
     final dbPath = await getDatabasesPath();
     return openDatabase(
       join(dbPath, 'my_app.db'),
-      onCreate: (db, version) {
-        return db.execute(
-          'CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, phone TEXT, password TEXT, role TEXT)',
+      onCreate: (db, version) async {
+        await db.execute(
+          'CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, password TEXT, phone TEXT, role TEXT)',
+        );
+
+        await db.execute(
+          'CREATE TABLE mood (id INTEGER PRIMARY KEY AUTOINCREMENT, mood TEXT, note TEXT)',
         );
       },
       version: 1,
@@ -37,7 +42,12 @@ class DBHelper {
     if (results.isNotEmpty) {
       return UserModel.fromMap(results.first);
     }
-
     return null;
+  }
+
+  static Future<void> insertMood(MoodModel mood) async {
+    final dbs = await db();
+
+    await dbs.insert("mood", mood.toMap());
   }
 }
