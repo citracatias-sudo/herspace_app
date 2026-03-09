@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import '../widgets/app_background.dart';
 import '../widgets/soft_card.dart';
+import '../models/user_model.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  final UserModel user;
+
+  const HomeScreen({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -22,23 +25,34 @@ class HomeScreen extends StatelessWidget {
 
                 SizedBox(height: 30),
 
-                SoftCard(
-                  child: ListTile(
-                    leading: Icon(Icons.chat_bubble_outline),
-                    title: Text("Anonymous Chat"),
-                    subtitle: Text("Share your thoughts"),
-                    trailing: Icon(Icons.arrow_forward_ios),
+                if (user.role == "speaker") ...[
+                  SoftCard(
+                    child: ListTile(
+                      leading: Icon(Icons.chat_bubble_outline),
+                      title: Text("Anonymous Chat"),
+                      subtitle: Text("Share your thoughts"),
+                      trailing: Icon(Icons.arrow_forward_ios),
+                    ),
                   ),
-                ),
 
-                SoftCard(
-                  child: ListTile(
-                    leading: Icon(Icons.mood),
-                    title: Text("Mood Tracker"),
-                    subtitle: Text("Track your feelings"),
-                    trailing: Icon(Icons.arrow_forward_ios),
+                  SoftCard(
+                    child: ListTile(
+                      leading: Icon(Icons.mood),
+                      title: Text("Mood Tracker"),
+                      subtitle: Text("Track your feelings"),
+                      trailing: Icon(Icons.arrow_forward_ios),
+                    ),
                   ),
-                ),
+                ] else ...[
+                  SoftCard(
+                    child: ListTile(
+                      leading: Icon(Icons.support_agent),
+                      title: Text("Listener Dashboard"),
+                      subtitle: Text("Help people who need support"),
+                      trailing: Icon(Icons.arrow_forward_ios),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),

@@ -9,7 +9,7 @@ class DBHelper {
       join(dbPath, 'my_app.db'),
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, password TEXT)',
+          'CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, phone TEXT, password TEXT, role TEXT)',
         );
       },
       version: 1,

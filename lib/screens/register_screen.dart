@@ -4,7 +4,9 @@ import 'package:herspace_app/models/user_model.dart';
 import 'role_selection_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+  final String role;
+
+  const RegisterScreen({super.key, required this.role});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -28,6 +30,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final user = UserModel(
       email: emailController.text,
       password: passwordController.text,
+      phone: phoneController.text,
+      role: widget.role,
     );
 
     await DBHelper.registerUser(user);

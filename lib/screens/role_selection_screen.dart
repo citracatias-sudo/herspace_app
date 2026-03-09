@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:herspace_app/screens/login_screen.dart';
 
+import 'package:herspace_app/screens/register_screen.dart';
 
 class RoleSelectionScreenHp extends StatelessWidget {
   const RoleSelectionScreenHp({super.key});
@@ -55,7 +55,9 @@ class RoleSelectionScreenHp extends StatelessWidget {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => RegisterScreen(role: 'listener'),
+                  ),
                 );
               },
               child: Text("Accept"),

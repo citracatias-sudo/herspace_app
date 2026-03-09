@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:herspace_app/screens/home_screen.dart';
 import '../database/db_helper.dart';
 import '../models/user_model.dart';
 import 'register_screen.dart';
@@ -53,12 +54,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   ScaffoldMessenger.of(
                     context,
                   ).showSnackBar(SnackBar(content: Text("Login success")));
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomeScreen(user : login)),
+                  );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Email or password invalid")),
                   );
                 }
-                ;
               },
               child: Text("Login"),
             ),
@@ -70,7 +74,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => RegisterScreen()),
+                      MaterialPageRoute(
+                        builder: (context) => RegisterScreen(role: 'speaker'),
+                      ),
                     );
                   },
                   child: const Text(
