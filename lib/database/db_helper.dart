@@ -15,7 +15,7 @@ class DBHelper {
         );
 
         await db.execute(
-          'CREATE TABLE mood (id INTEGER PRIMARY KEY AUTOINCREMENT, mood TEXT, date TEXT, note TEXT)',
+          'CREATE TABLE mood (id INTEGER PRIMARY KEY AUTOINCREMENT, mood TEXT, date TEXT, note TEXT, avatar TEXT)',
         );
         await db.execute(
           'CREATE TABLE chat(id INTEGER PRIMARY KEY AUTOINCREMENT, message TEXT, sender TEXT)',
@@ -95,5 +95,17 @@ class DBHelper {
     final dbs = await db();
 
     await dbs.delete("chat", where: "id = ?", whereArgs: [id]);
+  }
+
+  // avatar
+  static Future<void> updateAvatar(int id, String avatar) async {
+    final dbs = await db();
+
+    await dbs.update(
+      "user",
+      {"avatar": avatar},
+      where: "id = ?",
+      whereArgs: [id],
+    );
   }
 }

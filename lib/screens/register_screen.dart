@@ -77,6 +77,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       phone: phoneController.text,
       role: widget.role,
       nickname: nickname,
+      avatar: "😊",
     );
 
     await DBHelper.registerUser(user);

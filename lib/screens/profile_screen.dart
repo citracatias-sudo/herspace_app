@@ -1,10 +1,91 @@
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
+import '../database/db_helper.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   final UserModel user;
 
   const ProfileScreen({super.key, required this.user});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  List<String> avatars = [
+    "😊",
+    "😎",
+    "🌸",
+    "🌙",
+    "🐱",
+    "🐰",
+    "🐼",
+    "🍓",
+    "⭐",
+    "🦋",
+  ];
+
+  String selectedAvatar = "😊";
+
+  @override
+  void initState() {
+    super.initState();
+    selectedAvatar = widget.user.avatar;
+  }
+
+  void showAvatarPicker() {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.all(20),
+
+          child: GridView.builder(
+            shrinkWrap: true,
+
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 5,
+            ),
+
+            itemCount: avatars.length,
+
+            itemBuilder: (context, index) {
+              String avatar = avatars[index];
+
+              return GestureDetector(
+                onTap: () async {
+                  setState(() {
+                    selectedAvatar = avatar;
+                  });
+
+                  await DBHelper.updateAvatar(widget.user.id!, avatar);
+
+                  Navigator.pop(context);
+                },
+
+                child: Container(
+                  margin: EdgeInsets.all(6),
+
+                  decoration: BoxDecoration(
+                    color: Colors.pink[50],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+
+                  child: Center(
+                    child: Text(avatar, style: TextStyle(fontSize: 24)),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,24 +104,21 @@ class ProfileScreen extends StatelessWidget {
         child: Column(
           children: [
             /// AVATAR
-            CircleAvatar(
-              radius: 40,
-              backgroundColor: Color(0xFFF9A8D4),
+            GestureDetector(
+              onTap: showAvatarPicker,
 
-              child: Text(
-                user.email[0].toUpperCase(),
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+              child: CircleAvatar(
+                radius: 40,
+                backgroundColor: Color(0xFFF9A8D4),
+
+                child: Text(selectedAvatar, style: TextStyle(fontSize: 28)),
               ),
             ),
 
             SizedBox(height: 10),
 
             Text(
-              user.email,
+              widget.user.nickname,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
 
@@ -53,21 +131,32 @@ class ProfileScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
-
                 boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
               ),
 
               child: Column(
                 children: [
-                  buildProfileItem(Icons.email_outlined, "Email", user.email),
+                  buildProfileItem(
+                    Icons.email_outlined,
+                    "Email",
+                    widget.user.email,
+                  ),
 
                   Divider(),
 
-                  buildProfileItem(Icons.phone_outlined, "Phone", user.phone),
+                  buildProfileItem(
+                    Icons.phone_outlined,
+                    "Phone",
+                    widget.user.phone,
+                  ),
 
                   Divider(),
 
-                  buildProfileItem(Icons.person_outline, "Role", user.role),
+                  buildProfileItem(
+                    Icons.person_outline,
+                    "Role",
+                    widget.user.role,
+                  ),
                 ],
               ),
             ),
@@ -109,6 +198,7 @@ class ProfileScreen extends StatelessWidget {
 
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+
           children: [
             Text(title, style: TextStyle(fontSize: 12, color: Colors.grey)),
 
