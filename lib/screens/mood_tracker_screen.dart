@@ -12,14 +12,27 @@ class MoodTrackerScreen extends StatefulWidget {
 class _MoodTrackerScreenState extends State<MoodTrackerScreen> {
   final TextEditingController noteController = TextEditingController();
 
+  late List<MoodModel> dataMood = [];
   String selectedMood = "Happy";
+
+  //Panggil Data Mood
+  @override
+  void initState() {
+    super.initState();
+    getDataMood();
+  }
+
+  Future<void> getDataMood() async {
+    dataMood = await DBHelper.getMoods();
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Mood Tracker")),
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(20),
         child: Column(
           children: [
             DropdownButton<String>(
@@ -36,32 +49,85 @@ class _MoodTrackerScreenState extends State<MoodTrackerScreen> {
               },
             ),
 
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
 
             TextField(
               controller: noteController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: "How do you feel today?",
                 border: OutlineInputBorder(),
               ),
             ),
 
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
 
             ElevatedButton(
               onPressed: () async {
+                if (noteController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Mind to share your feelings with us? 😯"),
+                    ),
+                  );
+                  return;
+                }
+
                 final mood = MoodModel(
                   mood: selectedMood,
                   note: noteController.text,
                 );
 
                 await DBHelper.insertMood(mood);
+                noteController.clear(); // reset textfield
+                selectedMood = "Happy"; // reset dropdown
+                await getDataMood(); //langsung tampil mood
+
+                setState(() {});
 
                 ScaffoldMessenger.of(
                   context,
-                ).showSnackBar(const SnackBar(content: Text("Mood saved")));
+                ).showSnackBar(SnackBar(content: Text("Mood saved")));
               },
-              child: const Text("Save Mood"),
+              child: Text("Save Mood"),
+            ),
+            SizedBox(height: 20),
+            Expanded(
+              child: dataMood.isEmpty
+                  ? Center(
+                      child: Text(
+                        'No mood recorded yet',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: dataMood.length,
+                      itemBuilder: (context, index) {
+                        final mood = dataMood[index];
+
+                        return ListTile(
+                          title: Text(mood.mood),
+                          subtitle: Text(mood.note),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                onPressed: () async {
+                                  if (mood.id == null) return;
+
+                                  await DBHelper.deleteMood(mood.id!);
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text("Mood Deleted")),
+                                  );
+                                  await getDataMood();
+                                },
+                                icon: Icon(Icons.delete),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
             ),
           ],
         ),

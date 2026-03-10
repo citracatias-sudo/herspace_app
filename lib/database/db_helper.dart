@@ -2,6 +2,7 @@ import '../models/user_model.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import '../models/mood_model.dart';
+import '../models/chat_model.dart';
 
 class DBHelper {
   static Future<Database> db() async {
@@ -15,6 +16,9 @@ class DBHelper {
 
         await db.execute(
           'CREATE TABLE mood (id INTEGER PRIMARY KEY AUTOINCREMENT, mood TEXT, note TEXT)',
+        );
+        await db.execute(
+          'CREATE TABLE chat(id INTEGER PRIMARY KEY AUTOINCREMENT, message TEXT, sender TEXT)',
         );
       },
       version: 1,
@@ -45,9 +49,42 @@ class DBHelper {
     return null;
   }
 
+  //Insert Mood
   static Future<void> insertMood(MoodModel mood) async {
     final dbs = await db();
 
     await dbs.insert("mood", mood.toMap());
+  }
+
+  //Get Mood
+  static Future<List<MoodModel>> getMoods() async {
+    final dbs = await db();
+
+    final List<Map<String, dynamic>> results = await dbs.query("mood");
+
+    return results.map((e) => MoodModel.fromMap(e)).toList();
+  }
+
+  //Delete
+  static Future<void> deleteMood(int id) async {
+    final dbs = await db();
+
+    await dbs.delete("mood", where: "id = ?", whereArgs: [id]);
+  }
+
+  //chat
+  static Future<void> insertMessage(ChatModel chat) async {
+    final dbs = await db();
+
+    await dbs.insert("chat", chat.toMap());
+  }
+
+  //Get Message
+  static Future<List<ChatModel>> getMessages() async {
+    final dbs = await db();
+
+    final List<Map<String, dynamic>> results = await dbs.query("chat");
+
+    return results.map((e) => ChatModel.fromMap(e)).toList();
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'onboarding.dart';
+import 'package:herspace_app/screens/onboarding_screen.dart';
 
 class SplashScreenHp extends StatefulWidget {
   const SplashScreenHp({super.key});
