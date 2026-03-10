@@ -10,61 +10,83 @@ class RoleSelectionScreenHp extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
 
-      appBar: AppBar(
-        title: Text("Choose Your Role"),
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 28),
 
-      body: Padding(
-        padding: EdgeInsets.all(24),
+          child: Column(
+            children: [
 
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 20),
+              SizedBox(height: 40),
 
-            Text(
-              "How would you like to use HerSpace?",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+              /// LOGO
+              Container(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 18,
+                      offset: Offset(0, 8),
+                    )
+                  ],
+                ),
+                child: Image.asset(
+                  "assets/images/logo_herspace-preview.png",
+                  width: 90,
+                  filterQuality: FilterQuality.high,
+                ),
               ),
-            ),
 
-            SizedBox(height: 10),
+              SizedBox(height: 24),
 
-            Text(
-              "Choose your role to begin your journey.",
-              style: TextStyle(color: AppColors.textSecondary),
-            ),
+              /// TITLE
+              Text(
+                "Choose Your Role",
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+              ),
 
-            SizedBox(height: 40),
+              SizedBox(height: 10),
 
-            /// Speaker Card
-            roleCard(
-              context,
-              icon: Icons.chat_bubble_outline,
-              title: "Speaker",
-              subtitle: "Share your feelings anonymously",
-              color: AppColors.secondary,
-              role: "speaker",
-            ),
+              Text(
+                "How would you like to use HerSpace?",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 14,
+                ),
+              ),
 
-            SizedBox(height: 20),
+              SizedBox(height: 50),
 
-            /// Listener Card
-            roleCard(
-              context,
-              icon: Icons.support_agent,
-              title: "Listener",
-              subtitle: "Support someone who needs help",
-              color: AppColors.primary,
-              role: "listener",
-            ),
-          ],
+              /// SPEAKER CARD
+              roleCard(
+                context,
+                icon: Icons.chat_bubble_outline,
+                title: "Speaker",
+                subtitle:
+                    "Share your feelings anonymously and express what’s on your mind safely.",
+                color: AppColors.secondary,
+                role: "speaker",
+              ),
+
+              SizedBox(height: 20),
+
+              /// LISTENER CARD
+              roleCard(
+                context,
+                icon: Icons.support_agent,
+                title: "Listener",
+                subtitle:
+                    "Support others by listening and giving kind responses.",
+                color: AppColors.primary,
+                role: "listener",
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -84,52 +106,72 @@ class RoleSelectionScreenHp extends StatelessWidget {
       },
 
       child: Container(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.all(22),
 
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
 
-          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 14,
+              offset: Offset(0, 6),
+            )
+          ],
         ),
 
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+
+            /// ICON
             Container(
-              padding: EdgeInsets.all(12),
+              padding: EdgeInsets.all(14),
 
               decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(12),
+                color: color.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(14),
               ),
 
-              child: Icon(icon, size: 30, color: color),
+              child: Icon(
+                icon,
+                size: 28,
+                color: color,
+              ),
             ),
 
-            SizedBox(width: 16),
+            SizedBox(width: 18),
 
+            /// TEXT
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
                   Text(
                     title,
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 19,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
                     ),
                   ),
 
-                  SizedBox(height: 4),
+                  SizedBox(height: 6),
 
                   Text(
                     subtitle,
-                    style: TextStyle(color: AppColors.textSecondary),
+                    style: TextStyle(
+                      color: AppColors.textSecondary,
+                      height: 1.4,
+                    ),
                   ),
                 ],
               ),
             ),
+
+            SizedBox(width: 10),
 
             Icon(
               Icons.arrow_forward_ios,
@@ -149,18 +191,22 @@ class RoleSelectionScreenHp extends StatelessWidget {
       builder: (context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(18),
           ),
 
-          title: Text("Community Agreement"),
+          title: Text(
+            "Community Agreement",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
 
           content: Text(
             role == "speaker"
-                ? "Please respect others and keep conversations safe."
-                : "As a listener, please provide respectful and supportive responses.",
+                ? "Please respect others and keep conversations safe and kind."
+                : "As a listener, please respond with empathy and respect.",
           ),
 
           actions: [
+
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
@@ -170,7 +216,10 @@ class RoleSelectionScreenHp extends StatelessWidget {
 
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.secondary,
+                backgroundColor: AppColors.primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
 
               onPressed: () {
@@ -178,7 +227,9 @@ class RoleSelectionScreenHp extends StatelessWidget {
 
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => LoginScreen(),
+                  ),
                 );
               },
 

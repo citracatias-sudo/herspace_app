@@ -6,173 +6,255 @@ import '../models/user_model.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  bool ObscurePassword = true;
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  bool obscurePassword = true;
+
+  void showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  Future<void> login() async {
+
+    if (!formKey.currentState!.validate()) return;
+
+    final UserModel? login = await DBHelper.loginUser(
+      email: emailController.text.trim(),
+      password: passwordController.text.trim(),
+    );
+
+    if (login != null) {
+      showMessage("Login success");
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomeScreen(user: login),
+        ),
+      );
+    } else {
+      showMessage("Email or password invalid");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF8F8F8),
-
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            children: [
-              SizedBox(height: 60),
+          padding: EdgeInsets.symmetric(horizontal: 28),
+          child: Form(
+            key: formKey,
+            child: Column(
+              children: [
 
-              Text(
-                "Welcome Back",
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-              ),
+                SizedBox(height: 70),
 
-              SizedBox(height: 8),
-
-              Text(
-                "Login to continue your journey in HerSpace",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: AppColors.textSecondary),
-              ),
-
-              SizedBox(height: 40),
-
-              Container(
-                padding: EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(18),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 10,
-                      offset: Offset(0, 4),
-                    ),
-                  ],
-                ),
-
-                child: Column(
-                  children: [
-                    TextFormField(
-                      controller: emailController,
-                      decoration: InputDecoration(
-                        hintText: "Email",
-                        prefixIcon: Icon(Icons.email_outlined),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: 16),
-
-                    TextFormField(
-                      controller: passwordController,
-                      obscureText: ObscurePassword,
-                      decoration: InputDecoration(
-                        hintText: "Password",
-                        prefixIcon: Icon(Icons.lock_outline),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            ObscurePassword
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              ObscurePassword = !ObscurePassword;
-                            });
-                          },
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: 20),
-
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                        ),
-
-                        onPressed: () async {
-                          final UserModel? login = await DBHelper.loginUser(
-                            email: emailController.text,
-                            password: passwordController.text,
-                          );
-
-                          if (login != null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("Login success")),
-                            );
-
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => HomeScreen(user: login),
-                              ),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text("Email or password invalid"),
-                              ),
-                            );
-                          }
-                        },
-
-                        child: Text("Login", style: TextStyle(fontSize: 16)),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              SizedBox(height: 25),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Don't have an account? "),
-
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => RegisterScreen(role: 'speaker'),
-                        ),
-                      );
-                    },
-                    child: Text(
-                      "Sign Up",
-                      style: TextStyle(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                /// LOGO
+                Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 20,
+                        offset: Offset(0, 10),
+                      )
+                    ],
                   ),
-                ],
-              ),
+                  child: Image.asset(
+                    "assets/images/logo_herspace-preview.png",
+                    width: 90,
+                    filterQuality: FilterQuality.high,
+                  ),
+                ),
 
-              SizedBox(height: 40),
-            ],
+                SizedBox(height: 24),
+
+                /// TITLE
+                Text(
+                  "Welcome Back",
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+
+                SizedBox(height: 8),
+
+                Text(
+                  "Login to continue your journey in HerSpace",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 14,
+                  ),
+                ),
+
+                SizedBox(height: 40),
+
+                /// LOGIN CARD
+                Container(
+                  padding: EdgeInsets.all(22),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 14,
+                        offset: Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+
+                      /// EMAIL
+                      TextFormField(
+                        controller: emailController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Email is required";
+                          }
+
+                          if (!RegExp(
+                                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                              .hasMatch(value)) {
+                            return "Invalid email format";
+                          }
+
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          hintText: "Email",
+                          prefixIcon: Icon(Icons.email_outlined),
+                          filled: true,
+                          fillColor: Color(0xFFF5F5F5),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: 18),
+
+                      /// PASSWORD
+                      TextFormField(
+                        controller: passwordController,
+                        obscureText: obscurePassword,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Password is required";
+                          }
+
+                          if (value.length < 6) {
+                            return "Password must be at least 6 characters";
+                          }
+
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          hintText: "Password",
+                          prefixIcon: Icon(Icons.lock_outline),
+                          filled: true,
+                          fillColor: Color(0xFFF5F5F5),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              obscurePassword
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                obscurePassword = !obscurePassword;
+                              });
+                            },
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: 24),
+
+                      /// LOGIN BUTTON
+                      SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            elevation: 4,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          onPressed: login,
+                          child: Text(
+                            "Login",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                SizedBox(height: 30),
+
+                /// SIGN UP
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Don't have an account? "),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                RegisterScreen(role: 'speaker'),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        "Sign Up",
+                        style: TextStyle(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 40),
+              ],
+            ),
           ),
         ),
       ),

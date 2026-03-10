@@ -11,11 +11,11 @@ class DBHelper {
       join(dbPath, 'my_app.db'),
       onCreate: (db, version) async {
         await db.execute(
-          'CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, password TEXT, phone TEXT, role TEXT, nickname TEXT)',
+          'CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, password TEXT, phone TEXT, role TEXT, nickname TEXT, avatar TEXT)',
         );
 
         await db.execute(
-          'CREATE TABLE mood (id INTEGER PRIMARY KEY AUTOINCREMENT, mood TEXT, date TEXT, note TEXT, avatar TEXT)',
+          'CREATE TABLE mood (id INTEGER PRIMARY KEY AUTOINCREMENT, mood TEXT, date TEXT, note TEXT)',
         );
         await db.execute(
           'CREATE TABLE chat(id INTEGER PRIMARY KEY AUTOINCREMENT, message TEXT, sender TEXT)',
