@@ -11,11 +11,11 @@ class DBHelper {
       join(dbPath, 'my_app.db'),
       onCreate: (db, version) async {
         await db.execute(
-          'CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, password TEXT, phone TEXT, role TEXT)',
+          'CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, password TEXT, phone TEXT, role TEXT, nickname TEXT)',
         );
 
         await db.execute(
-          'CREATE TABLE mood (id INTEGER PRIMARY KEY AUTOINCREMENT, mood TEXT, note TEXT)',
+          'CREATE TABLE mood (id INTEGER PRIMARY KEY AUTOINCREMENT, mood TEXT, date TEXT, note TEXT)',
         );
         await db.execute(
           'CREATE TABLE chat(id INTEGER PRIMARY KEY AUTOINCREMENT, message TEXT, sender TEXT)',
@@ -25,6 +25,7 @@ class DBHelper {
     );
   }
 
+  //register
   static Future<void> registerUser(UserModel user) async {
     final dbs = await db();
 
@@ -32,6 +33,7 @@ class DBHelper {
     print(user.toMap());
   }
 
+  //login
   static Future<UserModel?> loginUser({
     required String email,
     required String password,
@@ -86,5 +88,12 @@ class DBHelper {
     final List<Map<String, dynamic>> results = await dbs.query("chat");
 
     return results.map((e) => ChatModel.fromMap(e)).toList();
+  }
+
+  //Delete Message
+  static Future<void> deleteMessage(int id) async {
+    final dbs = await db();
+
+    await dbs.delete("chat", where: "id = ?", whereArgs: [id]);
   }
 }

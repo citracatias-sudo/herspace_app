@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:herspace_app/screens/profile_screen.dart';
-import '../widgets/app_background.dart';
-import '../widgets/soft_card.dart';
 import '../models/user_model.dart';
 import 'chat_screen.dart';
 import 'mood_tracker_screen.dart';
@@ -19,7 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int selectedIndex = 0;
 
   late final List<Widget> pages = [
-    ChatScreen(),
+    ChatScreen(nickname: widget.user.nickname),
     MoodTrackerScreen(),
     ProfileScreen(user: widget.user),
   ];

@@ -1,86 +1,115 @@
 import 'package:flutter/material.dart';
 import 'package:herspace_app/decorations/app_colors.dart';
-import 'package:herspace_app/screens/login_screen.dart';
+import '../screens/login_screen.dart';
 
-class OnboardingScreen extends StatefulWidget {
+class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
-
-  @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
-}
-
-class _OnboardingScreenState extends State<OnboardingScreen> {
-  final PageController pageController = PageController();
-  int currentPage = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.all(40),
-        child: Column(
-          children: [
-            Expanded(
-              child: PageView(
-                controller: pageController,
-                onPageChanged: (index) {
-                  setState(() {
-                    currentPage = index;
-                  });
-                },
-                children: [
-                  Center(
-                    child: Text(
-                      "Welcome to HerSpace",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ),
-                  Center(
-                    child: Text(
-                      "Share your feelings safely",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ),
-                  Center(
-                    child: Text(
-                      "Connect with supportive listeners",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ),
-                ],
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 28),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: 20),
+
+              // Tagline bubble
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  "Your Safe Space Awaits",
+                  style: TextStyle(fontSize: 12),
+                ),
               ),
-            ),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [buildDot(0), buildDot(1), buildDot(2)],
-            ),
+              SizedBox(height: 30),
 
-            SizedBox(height: 10),
+              // Title
+              RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  style: TextStyle(fontSize: 32),
+                  children: [
+                    TextSpan(
+                      text: "Welcome to\n",
+                      style: TextStyle(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    TextSpan(
+                      text: "HerSpace",
+                      style: TextStyle(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
 
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
-                );
-              },
-              child: Text("Get Started"),
-            ),
-          ],
+              SizedBox(height: 20),
+
+              Text(
+                "A supportive community for women to connect, learn, grow, and thrive together",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: AppColors.textPrimary, fontSize: 14),
+              ),
+
+              SizedBox(height: 40),
+
+              // Gradient Button
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                  );
+                },
+                child: Container(
+                  height: 55,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(40),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Get Started →",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              SizedBox(height: 40),
+
+              // Image (replace later)
+              Container(
+                height: 220,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  image: const DecorationImage(
+                    image: AssetImage("assets/images/ladies.jpg"),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
-  }
-
-  Widget buildDot(int index) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 4),
-      width: currentPage == index ? 12 : 8,
-      height: currentPage == index ? 12 : 8,
-      decoration: BoxDecoration(
-        color: currentPage == index ? AppColors.primary : Colors.grey,
-        shape: BoxShape.circle,
       ),
     );
   }
