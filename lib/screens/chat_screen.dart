@@ -5,7 +5,7 @@ import '../models/chat_model.dart';
 
 class ChatScreen extends StatefulWidget {
   final String nickname;
-  ChatScreen({super.key, required this.nickname});
+  const ChatScreen({super.key, required this.nickname});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();

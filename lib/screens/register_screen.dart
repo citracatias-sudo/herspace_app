@@ -7,7 +7,7 @@ import 'role_selection_screen.dart';
 class RegisterScreen extends StatefulWidget {
   final String role;
 
-  RegisterScreen({super.key, required this.role});
+  const RegisterScreen({super.key, required this.role});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();

@@ -3,7 +3,7 @@ import 'package:herspace_app/decorations/app_colors.dart';
 import 'package:herspace_app/screens/login_screen.dart';
 
 class RoleSelectionScreenHp extends StatelessWidget {
-  RoleSelectionScreenHp({super.key});
+  const RoleSelectionScreenHp({super.key});
 
   @override
   Widget build(BuildContext context) {

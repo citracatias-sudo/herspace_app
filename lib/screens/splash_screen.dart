@@ -3,7 +3,7 @@ import 'package:herspace_app/decorations/app_colors.dart';
 import 'package:herspace_app/screens/onboarding_screen.dart';
 
 class SplashScreenHp extends StatefulWidget {
-  SplashScreenHp({super.key});
+  const SplashScreenHp({super.key});
 
   @override
   State<SplashScreenHp> createState() => _SplashScreenHpState();

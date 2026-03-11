@@ -3,7 +3,7 @@ import 'package:herspace_app/decorations/app_colors.dart';
 import '../screens/login_screen.dart';
 
 class OnboardingScreen extends StatelessWidget {
-  OnboardingScreen({super.key});
+  const OnboardingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -251,7 +251,7 @@ class FeatureCard extends StatelessWidget {
   final String title;
   final String description;
 
-  FeatureCard({
+  const FeatureCard({super.key, 
     required this.icon,
     required this.title,
     required this.description,
@@ -322,7 +322,7 @@ class TestimonialCard extends StatelessWidget {
   final String quote;
   final String author;
 
-  TestimonialCard({
+  const TestimonialCard({super.key, 
     required this.initials,
     required this.quote,
     required this.author,
