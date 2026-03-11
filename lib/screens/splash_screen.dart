@@ -21,7 +21,7 @@ class _SplashScreenHpState extends State<SplashScreenHp>
 
     controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 1200),
+      duration: Duration(seconds: 2),
     );
 
     scaleAnimation = Tween<double>(

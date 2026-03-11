@@ -5,7 +5,12 @@ import '../models/chat_model.dart';
 
 class ChatScreen extends StatefulWidget {
   final String nickname;
-  const ChatScreen({super.key, required this.nickname});
+  final String roomId;
+  final String listenerName;
+  const ChatScreen({super.key, 
+  required this.nickname, 
+  required this.roomId,
+  required this.listenerName});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -13,7 +18,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController messageController = TextEditingController();
-
+  final ScrollController scrollController = ScrollController();
   late List<ChatModel> dataChat = [];
 
   @override
@@ -21,10 +26,23 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
     getDataChat();
   }
+//auto scroll
+  void scrollToBottom() {
+  Future.delayed( Duration(milliseconds: 200), () {
+    if (scrollController.hasClients) {
+      scrollController.animateTo(
+        scrollController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+  });
+}
 
   Future<void> getDataChat() async {
-    dataChat = await DBHelper.getMessages();
+    dataChat = await DBHelper.getMessagesByRoom(widget.roomId);
     setState(() {});
+    scrollToBottom();
   }
 
   @override
@@ -33,14 +51,54 @@ class _ChatScreenState extends State<ChatScreen> {
       backgroundColor: Color(0xFFFFF4F8),
 
       appBar: AppBar(
-        title: Text("HerSpace Chat"),
-        centerTitle: true,
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        elevation: 0,
+  backgroundColor: AppColors.button,
+  foregroundColor: Colors.white,
+  elevation: 0,
+
+  title: Row(
+    children: [
+
+      CircleAvatar(
+        radius: 18,
+        backgroundColor: Colors.white,
+        child: Icon(Icons.auto_awesome, color: Colors.amber),
       ),
 
-      body: Column(
+      SizedBox(width: 10),
+
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          Text(
+          widget.listenerName,
+          style: TextStyle(fontSize: 16),
+        ),
+          Text(
+            "Online",
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.white70,
+            ),
+          ),
+        ],
+      ),
+    ],
+  ),
+),
+
+      body: Container(
+  decoration: BoxDecoration(
+    gradient: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [
+        Color(0xFFFFF4F8),
+        Color(0xFFFFE6F0),
+      ],
+    ),
+  ),
+  child: Column(
         children: [
           /// CHAT LIST
           Expanded(
@@ -52,6 +110,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                   )
                 : ListView.builder(
+                  controller: scrollController,
                     padding: EdgeInsets.all(20),
                     itemCount: dataChat.length,
                     itemBuilder: (context, index) {
@@ -59,126 +118,163 @@ class _ChatScreenState extends State<ChatScreen> {
 
                       bool isMe = chat.sender == widget.nickname;
 
-                      return Align(
-                        alignment: isMe
-                            ? Alignment.centerRight
-                            : Alignment.centerLeft,
+                      return Row(
+  mainAxisAlignment:
+      isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+  crossAxisAlignment: CrossAxisAlignment.end,
+  children: [
 
-                        child: GestureDetector(
-                          onLongPress: () async {
-                            if (chat.id == null) return;
+    if (!isMe)
+      CircleAvatar(
+        radius: 16,
+        backgroundColor: Color(0xFFFFD6E7),
+        child: Icon(Icons.favorite, size: 16, color: Colors.white),
+      ),
 
-                            await DBHelper.deleteMessage(chat.id!);
-                            await getDataChat();
+    if (!isMe) SizedBox(width: 8),
 
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("Message deleted")),
-                            );
-                          },
+    Flexible(
+      child: GestureDetector(
+        onLongPress: () async {
+          if (chat.id == null) return;
 
-                          child: Container(
-                            margin: EdgeInsets.symmetric(vertical: 6),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 10,
-                            ),
+          await DBHelper.deleteMessage(chat.id!);
+          await getDataChat();
 
-                            decoration: BoxDecoration(
-                              color: isMe ? AppColors.primary : Colors.white,
-                              borderRadius: BorderRadius.circular(16),
-                              boxShadow: [
-                                BoxShadow(color: Colors.black12, blurRadius: 4),
-                              ],
-                            ),
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Message deleted")),
+          );
+        },
+        child: Container(
+          margin: EdgeInsets.symmetric(vertical: 6),
+          padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          constraints: BoxConstraints(maxWidth: 260),
 
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  chat.sender,
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: isMe ? Colors.white70 : Colors.grey,
-                                  ),
-                                ),
+          decoration: BoxDecoration(
+            color: isMe ? AppColors.primary: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16),
+              topRight: Radius.circular(16),
+              bottomLeft: Radius.circular(isMe ? 16 : 4),
+              bottomRight: Radius.circular(isMe ? 4 : 16),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 4,
+                offset: Offset(0, 2),
+              )
+            ],
+          ),
 
-                                SizedBox(height: 4),
+          child: Column(
+            crossAxisAlignment:
+                isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: [
 
-                                Text(
-                                  chat.message,
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    color: isMe ? Colors.white : Colors.black87,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
+              Text(
+                chat.message,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: isMe ? Colors.white : Colors.black87,
+                ),
+              ),
+
+              SizedBox(height: 4),
+
+              Text(
+                chat.time,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: isMe ?  Color.fromARGB(179, 30, 30, 30) : Colors.grey,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  ],
+);
                     },
                   ),
           ),
 
           /// INPUT CHAT
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
-            ),
+  padding: EdgeInsets.fromLTRB(16, 10, 16, 16),
+  decoration: BoxDecoration(
+    color: Colors.white,
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black12,
+        blurRadius: 8,
+        offset: Offset(0, -2),
+      )
+    ],
+  ),
+  child: Row(
+    children: [
 
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: messageController,
-                    decoration: InputDecoration(
-                      hintText: "Share what's on your mind...",
-                      filled: true,
-                      fillColor: Color(0xFFFFF0F6),
-
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 10,
-                      ),
-
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                  ),
-                ),
-
-                SizedBox(width: 8),
-
-                CircleAvatar(
-                  radius: 24,
-                  backgroundColor: AppColors.primary,
-                  child: IconButton(
-                    icon: Icon(Icons.send, color: Colors.white),
-                    onPressed: () async {
-                      if (messageController.text.trim().isEmpty) return;
-
-                      final chat = ChatModel(
-                        message: messageController.text,
-                        sender: widget.nickname,
-                        roomId: 'general',
-                      );
-
-                      await DBHelper.insertMessage(chat);
-
-                      messageController.clear();
-
-                      await getDataChat();
-                    },
-                  ),
-                ),
-              ],
+      Expanded(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 14),
+          decoration: BoxDecoration(
+            color: Color(0xFFFFF0F6),
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: TextField(
+            controller: messageController,
+            minLines: 1,
+            maxLines: 4,
+            decoration: InputDecoration(
+              hintText: "Share what's on your mind...",
+              border: InputBorder.none,
             ),
           ),
+        ),
+      ),
+
+      SizedBox(width: 10),
+
+      GestureDetector(
+        onTap: () async {
+          if (messageController.text.trim().isEmpty) return;
+
+          final now = TimeOfDay.now();
+
+          final chat = ChatModel(
+            message: messageController.text,
+            sender: widget.nickname,
+            roomId: widget.roomId,
+            time: "${now.hour}:${now.minute}",
+          );
+
+          await DBHelper.insertMessage(chat);
+
+          messageController.clear();
+
+          await getDataChat();
+        },
+
+        child: Container(
+          height: 48,
+          width: 48,
+          decoration: BoxDecoration(
+            color: AppColors.secondary,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            Icons.send,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    ],
+  ),
+),
         ],
+      ),
       ),
     );
   }

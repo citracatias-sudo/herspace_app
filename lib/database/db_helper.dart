@@ -18,7 +18,7 @@ class DBHelper {
           'CREATE TABLE mood (id INTEGER PRIMARY KEY AUTOINCREMENT, mood TEXT, date TEXT, note TEXT)',
         );
         await db.execute(
-          'CREATE TABLE chat(id INTEGER PRIMARY KEY AUTOINCREMENT, roomId TEXT, message TEXT, sender TEXT)',
+          'CREATE TABLE chat(id INTEGER PRIMARY KEY AUTOINCREMENT, roomId TEXT, message TEXT, sender TEXT, time TEXT)',
         );
       },
       version: 1,
@@ -91,12 +91,40 @@ class DBHelper {
     return results.map((e) => ChatModel.fromMap(e)).toList();
   }
 
+  // Get Messages by Room
+static Future<List<ChatModel>> getMessagesByRoom(String roomId) async {
+  final dbs = await db();
+
+  final List<Map<String, dynamic>> results = await dbs.query(
+    "chat",
+    where: "roomId = ?",
+    whereArgs: [roomId],
+    orderBy: "id ASC",
+  );
+
+  return results.map((e) => ChatModel.fromMap(e)).toList();
+}
+
   //Delete Message
   static Future<void> deleteMessage(int id) async {
     final dbs = await db();
 
     await dbs.delete("chat", where: "id = ?", whereArgs: [id]);
   }
+
+  // Get Last Message per Room
+static Future<List<Map<String, dynamic>>> getLastMessages() async {
+  final dbs = await db();
+
+  final result = await dbs.rawQuery('''
+    SELECT roomId, message, sender, MAX(id) as lastId
+    FROM chat
+    GROUP BY roomId
+    ORDER BY lastId DESC
+  ''');
+
+  return result;
+}
 
   // avatar
   static Future<void> updateAvatar(int id, String avatar) async {

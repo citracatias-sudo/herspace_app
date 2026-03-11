@@ -37,7 +37,7 @@ class ListenerDashboardScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ChatScreen(nickname: user.nickname),
+                    builder: (context) => ChatScreen(nickname: user.nickname, roomId: "community_room",listenerName: "nanti isi",),
                   ),
                 );
               },

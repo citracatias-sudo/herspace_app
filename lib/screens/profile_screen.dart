@@ -30,6 +30,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     "🍓",
     "⭐",
     "🦋",
+    "🌷",
+    "🌹",
+    "🍂",
+    "🌺",
+    "☯️"
+    
   ];
 
   String selectedAvatar = "😊";
@@ -65,6 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 5,
+              
             ),
 
             itemCount: avatars.length,

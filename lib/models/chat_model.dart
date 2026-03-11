@@ -6,16 +6,28 @@ class ChatModel {
   final String message;
   final String roomId;
   final String sender;
-  ChatModel({this.id, required this.message, required this.sender, required this.roomId});
+  final String time;
+  ChatModel({this.id, 
+  required this.message, 
+  required this.sender, 
+  required this.roomId, 
+  required this.time});
 
-  ChatModel copyWith({int? id, String? message, String? sender}) {
-    return ChatModel(
-      id: id ?? this.id,
-      roomId: roomId ?? this.roomId,
-      message: message ?? this.message,
-      sender: sender ?? this.sender,
-    );
-  }
+  ChatModel copyWith({
+  int? id,
+  String? message,
+  String? sender,
+  String? roomId,
+  String? time,
+}) {
+  return ChatModel(
+    id: id ?? this.id,
+    message: message ?? this.message,
+    sender: sender ?? this.sender,
+    roomId: roomId ?? this.roomId,
+    time: time ?? this.time,
+  );
+}
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -23,6 +35,7 @@ class ChatModel {
       'roomId': roomId,
       'message': message,
       'sender': sender,
+      'time': time,
     };
   }
 
@@ -32,6 +45,7 @@ class ChatModel {
       roomId: map['roomId'],
       message: (map["message"] ?? '') as String,
       sender: (map["sender"] ?? '') as String,
+      time: (map["time"] ?? '') as String,
     );
   }
 
