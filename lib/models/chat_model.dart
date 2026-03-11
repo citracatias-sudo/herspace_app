@@ -4,24 +4,32 @@ import 'dart:convert';
 class ChatModel {
   final int? id;
   final String message;
+  final String roomId;
   final String sender;
-  const ChatModel({this.id, required this.message, required this.sender});
+  ChatModel({this.id, required this.message, required this.sender, required this.roomId});
 
   ChatModel copyWith({int? id, String? message, String? sender}) {
     return ChatModel(
       id: id ?? this.id,
+      roomId: roomId ?? this.roomId,
       message: message ?? this.message,
       sender: sender ?? this.sender,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{'id': id, 'message': message, 'sender': sender};
+    return <String, dynamic>{
+      'id': id,
+      'roomId': roomId,
+      'message': message,
+      'sender': sender,
+    };
   }
 
   factory ChatModel.fromMap(Map<String, dynamic> map) {
     return ChatModel(
       id: map['id'] != null ? map["id"] as int : null,
+      roomId: map['roomId'],
       message: (map["message"] ?? '') as String,
       sender: (map["sender"] ?? '') as String,
     );

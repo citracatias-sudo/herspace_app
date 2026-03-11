@@ -18,7 +18,7 @@ class DBHelper {
           'CREATE TABLE mood (id INTEGER PRIMARY KEY AUTOINCREMENT, mood TEXT, date TEXT, note TEXT)',
         );
         await db.execute(
-          'CREATE TABLE chat(id INTEGER PRIMARY KEY AUTOINCREMENT, message TEXT, sender TEXT)',
+          'CREATE TABLE chat(id INTEGER PRIMARY KEY AUTOINCREMENT, roomId TEXT, message TEXT, sender TEXT)',
         );
       },
       version: 1,
@@ -86,6 +86,7 @@ class DBHelper {
     final dbs = await db();
 
     final List<Map<String, dynamic>> results = await dbs.query("chat");
+    
 
     return results.map((e) => ChatModel.fromMap(e)).toList();
   }
@@ -104,6 +105,18 @@ class DBHelper {
     await dbs.update(
       "user",
       {"avatar": avatar},
+      where: "id = ?",
+      whereArgs: [id],
+    );
+  }
+
+  //Edit Profile
+  static Future<int> updateUser(int id, String email, String phone) async {
+    final dbs = await db();
+
+    return await dbs.update(
+      "user",
+      {"email": email, "phone": phone},
       where: "id = ?",
       whereArgs: [id],
     );

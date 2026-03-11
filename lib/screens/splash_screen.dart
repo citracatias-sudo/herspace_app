@@ -3,7 +3,7 @@ import 'package:herspace_app/decorations/app_colors.dart';
 import 'package:herspace_app/screens/onboarding_screen.dart';
 
 class SplashScreenHp extends StatefulWidget {
-  const SplashScreenHp({super.key});
+  SplashScreenHp({super.key});
 
   @override
   State<SplashScreenHp> createState() => _SplashScreenHpState();
@@ -11,7 +11,6 @@ class SplashScreenHp extends StatefulWidget {
 
 class _SplashScreenHpState extends State<SplashScreenHp>
     with SingleTickerProviderStateMixin {
-
   late AnimationController controller;
   late Animation<double> scaleAnimation;
   late Animation<double> opacityAnimation;
@@ -28,22 +27,12 @@ class _SplashScreenHpState extends State<SplashScreenHp>
     scaleAnimation = Tween<double>(
       begin: 0.9,
       end: 1,
-    ).animate(
-      CurvedAnimation(
-        parent: controller,
-        curve: Curves.easeOut,
-      ),
-    );
+    ).animate(CurvedAnimation(parent: controller, curve: Curves.easeOut));
 
     opacityAnimation = Tween<double>(
       begin: 0,
       end: 1,
-    ).animate(
-      CurvedAnimation(
-        parent: controller,
-        curve: Curves.easeIn,
-      ),
-    );
+    ).animate(CurvedAnimation(parent: controller, curve: Curves.easeIn));
 
     controller.forward();
 
@@ -57,9 +46,7 @@ class _SplashScreenHpState extends State<SplashScreenHp>
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
-        builder: (context) => OnboardingScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => OnboardingScreen()),
     );
   }
 
@@ -73,20 +60,17 @@ class _SplashScreenHpState extends State<SplashScreenHp>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-
-        /// GRADIENT BACKGROUND
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              AppColors.primary,
-              AppColors.primary.withOpacity(0.85),
-              Colors.purpleAccent,
+              // AppColors.primary.withOpacity(0.75),
+              Color.fromARGB(255, 212, 189, 216),
+              Color.fromARGB(255, 254, 254, 255),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
         ),
-
         child: Center(
           child: FadeTransition(
             opacity: opacityAnimation,
@@ -95,51 +79,38 @@ class _SplashScreenHpState extends State<SplashScreenHp>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-
-                  /// LOGO (UKURAN ASLI + SHADOW)
-                  Container(
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 25,
-                          offset: Offset(0, 10),
-                        )
-                      ],
-                    ),
-                    child: Image.asset(
-                      'assets/images/logo_herspace-preview.png',
-                      width: 160,
-                      filterQuality: FilterQuality.high,
-                    ),
+                  /// LOGO
+                  Image.asset(
+                    'assets/images/logo_herspace (2)-Photoroom.png',
+                    width: 400,
+                    filterQuality: FilterQuality.high,
                   ),
 
                   SizedBox(height: 24),
 
                   /// APP NAME
-                  Text(
-                    "HerSpace",
-                    style: TextStyle(
-                      fontSize: 34,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      letterSpacing: 1,
-                    ),
-                  ),
+                  // Text(
+                  //   "HerSpace",
+                  //   style: TextStyle(
+                  //     fontSize: 34,
+                  //     fontWeight: FontWeight.bold,
+                  //     color: Colors.white,
+                  //     letterSpacing: 1,
+                  //   ),
+                  // ),
 
-                  SizedBox(height: 8),
+                  // SizedBox(height: 8),
 
-                  /// TAGLINE
-                  Text(
-                    "A safe space for every woman",
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.white.withOpacity(0.9),
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-
-                  SizedBox(height: 40),
+                  // /// TAGLINE
+                  // Text(
+                  //   "A safe space for every woman",
+                  //   style: TextStyle(
+                  //     fontSize: 15,
+                  //     color: Colors.white.withOpacity(0.9),
+                  //     letterSpacing: 0.5,
+                  //   ),
+                  // ),
+                  SizedBox(height: 30),
 
                   /// LOADING
                   SizedBox(
@@ -149,7 +120,7 @@ class _SplashScreenHpState extends State<SplashScreenHp>
                       strokeWidth: 3,
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

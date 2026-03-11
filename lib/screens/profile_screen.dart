@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:herspace_app/decorations/app_colors.dart';
+import 'package:herspace_app/screens/login_screen.dart';
+import 'package:herspace_app/widgets/gradient_button.dart';
 import '../models/user_model.dart';
 import '../database/db_helper.dart';
 
@@ -12,6 +15,10 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  late TextEditingController nicknameController;
+  late TextEditingController emailController;
+  late TextEditingController phoneController;
+
   List<String> avatars = [
     "😊",
     "😎",
@@ -30,7 +37,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
+    phoneController = TextEditingController(text: widget.user.phone);
+    emailController = TextEditingController(text: widget.user.email);
     selectedAvatar = widget.user.avatar;
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    phoneController.dispose();
+    super.dispose();
   }
 
   void showAvatarPicker() {
@@ -87,6 +103,57 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void editProfile() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Edit Profile"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 10),
+
+              TextField(
+                controller: emailController,
+                decoration: InputDecoration(labelText: "Email"),
+              ),
+
+              SizedBox(height: 10),
+
+              TextField(
+                controller: phoneController,
+                decoration: InputDecoration(labelText: "Phone"),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text("Cancel"),
+            ),
+
+            ElevatedButton(
+              onPressed: () async {
+                await DBHelper.updateUser(
+                  widget.user.id!,
+                  emailController.text,
+                  phoneController.text,
+                );
+
+                setState(() {});
+                Navigator.pop(context);
+              },
+              child: Text("Save"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -117,9 +184,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             SizedBox(height: 10),
 
-            Text(
-              widget.user.nickname,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            GestureDetector(
+              onTap: editProfile,
+              child: Text(
+                widget.user.nickname,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
             ),
 
             SizedBox(height: 30),
@@ -139,7 +209,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   buildProfileItem(
                     Icons.email_outlined,
                     "Email",
-                    widget.user.email,
+                    emailController.text,
                   ),
 
                   Divider(),
@@ -147,7 +217,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   buildProfileItem(
                     Icons.phone_outlined,
                     "Phone",
-                    widget.user.phone,
+                    phoneController.text,
                   ),
 
                   Divider(),
@@ -164,24 +234,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             SizedBox(height: 30),
 
             /// LOGOUT BUTTON
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFFA78BFA),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-
-                child: Text("Logout", style: TextStyle(fontSize: 16)),
-              ),
+            GradientButton(
+              text: "Logout",
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                  (Route) => false,
+                );
+              },
             ),
           ],
         ),
@@ -196,17 +257,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         SizedBox(width: 12),
 
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: TextStyle(fontSize: 12, color: Colors.grey)),
 
-          children: [
-            Text(title, style: TextStyle(fontSize: 12, color: Colors.grey)),
+              Text(
+                value,
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
+        ),
 
-            Text(
-              value,
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
-            ),
-          ],
+        /// EDIT BUTTON
+        IconButton(
+          icon: Icon(Icons.edit_outlined, color: AppColors.secondary),
+          onPressed: editProfile,
         ),
       ],
     );

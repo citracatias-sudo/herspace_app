@@ -16,25 +16,13 @@ class RoleSelectionScreenHp extends StatelessWidget {
 
           child: Column(
             children: [
-
               SizedBox(height: 40),
 
               /// LOGO
-              Container(
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 18,
-                      offset: Offset(0, 8),
-                    )
-                  ],
-                ),
-                child: Image.asset(
-                  "assets/images/logo_herspace-preview.png",
-                  width: 90,
-                  filterQuality: FilterQuality.high,
-                ),
+              Image.asset(
+                "assets/images/logo_herspace (2)-Photoroom.png",
+                width: 180,
+                filterQuality: FilterQuality.high,
               ),
 
               SizedBox(height: 24),
@@ -54,10 +42,7 @@ class RoleSelectionScreenHp extends StatelessWidget {
               Text(
                 "How would you like to use HerSpace?",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
               ),
 
               SizedBox(height: 50),
@@ -117,14 +102,13 @@ class RoleSelectionScreenHp extends StatelessWidget {
               color: Colors.black12,
               blurRadius: 14,
               offset: Offset(0, 6),
-            )
+            ),
           ],
         ),
 
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             /// ICON
             Container(
               padding: EdgeInsets.all(14),
@@ -134,11 +118,7 @@ class RoleSelectionScreenHp extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14),
               ),
 
-              child: Icon(
-                icon,
-                size: 28,
-                color: color,
-              ),
+              child: Icon(icon, size: 28, color: color),
             ),
 
             SizedBox(width: 18),
@@ -148,7 +128,6 @@ class RoleSelectionScreenHp extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   Text(
                     title,
                     style: TextStyle(
@@ -206,7 +185,6 @@ class RoleSelectionScreenHp extends StatelessWidget {
           ),
 
           actions: [
-
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
@@ -227,9 +205,7 @@ class RoleSelectionScreenHp extends StatelessWidget {
 
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => LoginScreen(),
-                  ),
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
                 );
               },
 

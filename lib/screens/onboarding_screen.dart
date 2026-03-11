@@ -16,7 +16,6 @@ class OnboardingScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-
                 /// TAGLINE
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
@@ -28,7 +27,7 @@ class OnboardingScreen extends StatelessWidget {
                         color: Colors.black12,
                         blurRadius: 6,
                         offset: Offset(0, 3),
-                      )
+                      ),
                     ],
                   ),
                   child: Text(
@@ -84,7 +83,7 @@ class OnboardingScreen extends StatelessWidget {
                         color: Colors.black12,
                         blurRadius: 14,
                         offset: Offset(0, 8),
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -96,9 +95,7 @@ class OnboardingScreen extends StatelessWidget {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => LoginScreen(),
-                      ),
+                      MaterialPageRoute(builder: (context) => LoginScreen()),
                     );
                   },
                   child: Container(
@@ -106,18 +103,15 @@ class OnboardingScreen extends StatelessWidget {
                     width: double.infinity,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [
-                          AppColors.primary,
-                          Colors.purpleAccent,
-                        ],
+                        colors: [AppColors.primary, Colors.purpleAccent],
                       ),
-                      borderRadius: BorderRadius.circular(40),
+                      borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
                           color: AppColors.primary.withOpacity(0.35),
                           blurRadius: 14,
                           offset: Offset(0, 8),
-                        )
+                        ),
                       ],
                     ),
                     child: Row(
@@ -132,10 +126,7 @@ class OnboardingScreen extends StatelessWidget {
                           ),
                         ),
                         SizedBox(width: 8),
-                        Icon(
-                          Icons.arrow_forward,
-                          color: Colors.white,
-                        )
+                        Icon(Icons.arrow_forward, color: Colors.white),
                       ],
                     ),
                   ),
@@ -167,7 +158,6 @@ class OnboardingScreen extends StatelessWidget {
                   physics: NeverScrollableScrollPhysics(),
                   childAspectRatio: 0.75,
                   children: [
-
                     FeatureCard(
                       icon: Icons.message,
                       title: "Personal Chat with Listener",
@@ -175,9 +165,9 @@ class OnboardingScreen extends StatelessWidget {
                     ),
 
                     FeatureCard(
-                      icon: Icons.people,
-                      title: "Professional Help",
-                      description: "Connect with licensed therapists",
+                      icon: Icons.call_end_outlined,
+                      title: "Experienced Listener",
+                      description: "Connect with trained peers",
                     ),
 
                     FeatureCard(
@@ -231,8 +221,7 @@ class OnboardingScreen extends StatelessWidget {
 
                 TestimonialCard(
                   initials: "E",
-                  quote:
-                      "Connecting with a therapist here changed my life.",
+                  quote: "Connecting with a therapist here changed my life.",
                   author: "— Emma L.",
                 ),
 
@@ -251,7 +240,8 @@ class FeatureCard extends StatelessWidget {
   final String title;
   final String description;
 
-  const FeatureCard({super.key, 
+  const FeatureCard({
+    super.key,
     required this.icon,
     required this.title,
     required this.description,
@@ -269,24 +259,19 @@ class FeatureCard extends StatelessWidget {
             color: Colors.black12,
             blurRadius: 10,
             offset: Offset(0, 6),
-          )
+          ),
         ],
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-
           Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: AppColors.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(
-              icon,
-              color: AppColors.primary,
-              size: 28,
-            ),
+            child: Icon(icon, color: AppColors.primary, size: 28),
           ),
 
           SizedBox(height: 14),
@@ -294,10 +279,7 @@ class FeatureCard extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 15,
-            ),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
           ),
 
           SizedBox(height: 8),
@@ -305,11 +287,7 @@ class FeatureCard extends StatelessWidget {
           Text(
             description,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 13,
-              height: 1.4,
-              color: Colors.black87,
-            ),
+            style: TextStyle(fontSize: 13, height: 1.4, color: Colors.black87),
           ),
         ],
       ),
@@ -322,7 +300,8 @@ class TestimonialCard extends StatelessWidget {
   final String quote;
   final String author;
 
-  const TestimonialCard({super.key, 
+  const TestimonialCard({
+    super.key,
     required this.initials,
     required this.quote,
     required this.author,
@@ -340,13 +319,12 @@ class TestimonialCard extends StatelessWidget {
             color: Colors.black12,
             blurRadius: 10,
             offset: Offset(0, 6),
-          )
+          ),
         ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           CircleAvatar(
             radius: 24,
             backgroundColor: AppColors.primary.withOpacity(0.15),
@@ -365,26 +343,17 @@ class TestimonialCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 Text(
                   quote,
-                  style: TextStyle(
-                    fontStyle: FontStyle.italic,
-                    height: 1.5,
-                  ),
+                  style: TextStyle(fontStyle: FontStyle.italic, height: 1.5),
                 ),
 
                 SizedBox(height: 8),
 
-                Text(
-                  author,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                  ),
-                )
+                Text(author, style: TextStyle(fontWeight: FontWeight.w600)),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

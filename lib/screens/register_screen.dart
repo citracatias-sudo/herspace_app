@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:herspace_app/database/db_helper.dart';
 import 'package:herspace_app/decorations/app_colors.dart';
 import 'package:herspace_app/models/user_model.dart';
+import 'package:herspace_app/screens/login_screen.dart';
+import 'package:herspace_app/widgets/gradient_button.dart';
 import 'role_selection_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -14,7 +16,6 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
@@ -26,10 +27,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void showMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        behavior: SnackBarBehavior.floating,
-      ),
+      SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
     );
   }
 
@@ -67,7 +65,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Future<void> registerUser() async {
-
     if (!formKey.currentState!.validate()) return;
 
     String nickname = nicknameController.text;
@@ -91,9 +88,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
-        builder: (context) => RoleSelectionScreenHp(),
-      ),
+      MaterialPageRoute(builder: (context) => RoleSelectionScreenHp()),
     );
   }
 
@@ -111,51 +106,37 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
             child: Column(
               children: [
-
-                SizedBox(height: 60),
+                SizedBox(height: 30),
 
                 /// LOGO
-                Container(
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 20,
-                        offset: Offset(0, 10),
-                      )
-                    ],
-                  ),
+                Center(
                   child: Image.asset(
-                    "assets/images/logo_herspace-preview.png",
-                    width: 90,
+                    "assets/images/logo_herspace (2)-Photoroom.png",
+                    width: 150,
                     filterQuality: FilterQuality.high,
                   ),
                 ),
 
-                SizedBox(height: 24),
+                SizedBox(height: 16),
 
                 /// TITLE
                 Text(
-                  "Create Account",
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
+                  "JOIN THE COMMUNITY",
+                  style: TextStyle(fontSize: 24, color: AppColors.textPrimary),
                 ),
 
-                SizedBox(height: 8),
+                SizedBox(height: 5),
 
                 Text(
-                  "Join HerSpace and start your journey",
+                  "Where it's easier to speak",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: AppColors.textSecondary,
-                    fontSize: 14,
+                    fontSize: 12,
                   ),
                 ),
 
-                SizedBox(height: 40),
+                SizedBox(height: 24),
 
                 /// REGISTER CARD
                 Container(
@@ -174,13 +155,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                   child: Column(
                     children: [
-
                       /// NICKNAME
                       TextFormField(
                         controller: nicknameController,
                         textAlign: TextAlign.center,
                         decoration: InputDecoration(
-                          hintText: "Anonymous Nickname (optional)",
+                          hintText: "Choose a nickname",
                           filled: true,
                           fillColor: Color(0xFFF5F5F5),
                           border: OutlineInputBorder(
@@ -202,20 +182,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         },
                       ),
 
-                      SizedBox(height: 18),
+                      SizedBox(height: 15),
 
                       /// EMAIL
                       TextFormField(
                         controller: emailController,
                         validator: (value) {
-
                           if (value == null || value.isEmpty) {
                             return "Email is required";
                           }
 
                           if (!RegExp(
-                                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                              .hasMatch(value)) {
+                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                          ).hasMatch(value)) {
                             return "Invalid email format";
                           }
 
@@ -233,14 +212,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       ),
 
-                      SizedBox(height: 18),
+                      SizedBox(height: 15),
 
                       /// PASSWORD
                       TextFormField(
                         controller: passwordController,
                         obscureText: obscurePassword,
                         validator: (value) {
-
                           if (value == null || value.isEmpty) {
                             return "Password is required";
                           }
@@ -275,14 +253,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       ),
 
-                      SizedBox(height: 18),
+                      SizedBox(height: 15),
 
                       /// PHONE
                       TextFormField(
                         controller: phoneController,
                         keyboardType: TextInputType.phone,
                         validator: (value) {
-
                           if (value == null || value.isEmpty) {
                             return "Phone number is required";
                           }
@@ -308,32 +285,36 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       SizedBox(height: 24),
 
                       /// REGISTER BUTTON
-                      SizedBox(
-                        width: double.infinity,
-                        height: 52,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            elevation: 4,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
-                          onPressed: registerUser,
-                          child: Text(
-                            "Register",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
+                      GradientButton(text: "Register", onPressed: registerUser),
                     ],
                   ),
                 ),
 
-                SizedBox(height: 40),
+                SizedBox(height: 10),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Already have account?  "),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoginScreen(),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        "Sign in",
+                        style: TextStyle(
+                          color: AppColors.secondary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),

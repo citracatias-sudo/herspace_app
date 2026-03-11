@@ -52,7 +52,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                   )
                 : ListView.builder(
-                    padding: EdgeInsets.all(16),
+                    padding: EdgeInsets.all(20),
                     itemCount: dataChat.length,
                     itemBuilder: (context, index) {
                       final chat = dataChat[index];
@@ -164,6 +164,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       final chat = ChatModel(
                         message: messageController.text,
                         sender: widget.nickname,
+                        roomId:
                       );
 
                       await DBHelper.insertMessage(chat);

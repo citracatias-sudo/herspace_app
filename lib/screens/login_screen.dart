@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:herspace_app/decorations/app_colors.dart';
+import 'package:herspace_app/screens/home_dashboard_screen.dart';
 import 'package:herspace_app/screens/home_screen.dart';
+import 'package:herspace_app/screens/listener_dashboard_screen.dart';
+import 'package:herspace_app/widgets/gradient_button.dart';
 import '../database/db_helper.dart';
 import '../models/user_model.dart';
 import 'register_screen.dart';
@@ -13,7 +16,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -23,15 +25,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void showMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        behavior: SnackBarBehavior.floating,
-      ),
+      SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
     );
   }
 
   Future<void> login() async {
-
     if (!formKey.currentState!.validate()) return;
 
     final UserModel? login = await DBHelper.loginUser(
@@ -42,12 +40,19 @@ class _LoginScreenState extends State<LoginScreen> {
     if (login != null) {
       showMessage("Login success");
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => HomeScreen(user: login),
-        ),
-      );
+      if (login.role == "listener") {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ListenerDashboardScreen(user: login),
+          ),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => HomeScreen(user: login)),
+        );
+      }
     } else {
       showMessage("Email or password invalid");
     }
@@ -64,23 +69,13 @@ class _LoginScreenState extends State<LoginScreen> {
             key: formKey,
             child: Column(
               children: [
-
                 SizedBox(height: 70),
 
                 /// LOGO
-                Container(
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 20,
-                        offset: Offset(0, 10),
-                      )
-                    ],
-                  ),
+                Center(
                   child: Image.asset(
-                    "assets/images/logo_herspace-preview.png",
-                    width: 90,
+                    "assets/images/logo_herspace (2)-Photoroom.png",
+                    width: 150,
                     filterQuality: FilterQuality.high,
                   ),
                 ),
@@ -90,11 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 /// TITLE
                 Text(
                   "Welcome Back",
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
+                  style: TextStyle(fontSize: 30, color: AppColors.textPrimary),
                 ),
 
                 SizedBox(height: 8),
@@ -126,7 +117,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   child: Column(
                     children: [
-
                       /// EMAIL
                       TextFormField(
                         controller: emailController,
@@ -136,8 +126,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           }
 
                           if (!RegExp(
-                                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                              .hasMatch(value)) {
+                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                          ).hasMatch(value)) {
                             return "Invalid email format";
                           }
 
@@ -199,27 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       SizedBox(height: 24),
 
                       /// LOGIN BUTTON
-                      SizedBox(
-                        width: double.infinity,
-                        height: 52,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            elevation: 4,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
-                          onPressed: login,
-                          child: Text(
-                            "Login",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
+                      GradientButton(text: "Login", onPressed: login),
                     ],
                   ),
                 ),
