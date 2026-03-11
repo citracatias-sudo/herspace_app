@@ -164,7 +164,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       final chat = ChatModel(
                         message: messageController.text,
                         sender: widget.nickname,
-                        roomId:
+                        roomId: 'general',
                       );
 
                       await DBHelper.insertMessage(chat);
