@@ -47,7 +47,11 @@ class _CommunityScreenState extends State<CommunityScreen> {
         },
       ),
 
-      body: ListView.builder(
+      body: discussions.isEmpty
+    ? Center(
+        child: Text("No discussions yet"),
+      )
+    : ListView.builder(
         padding: EdgeInsets.all(16),
         itemCount: discussions.length,
 

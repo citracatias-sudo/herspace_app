@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:herspace_app/decorations/app_colors.dart';
+import 'package:lottie/lottie.dart';
 import '../screens/login_screen.dart';
 
 class OnboardingScreen extends StatelessWidget {
@@ -40,7 +41,7 @@ class OnboardingScreen extends StatelessWidget {
                   ),
                 ),
 
-                SizedBox(height: 32),
+                SizedBox(height: 10),
 
                 /// TITLE
                 Text(
@@ -66,39 +67,25 @@ class OnboardingScreen extends StatelessWidget {
                   ),
                 ),
 
-                SizedBox(height: 34),
+                SizedBox(height: 20),
 
-                /// HERO IMAGE
-                Container(
-                  height: 240,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(28),
-                    image: DecorationImage(
-                      image: AssetImage("assets/images/ladies.jpg"),
-                      fit: BoxFit.cover,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 14,
-                        offset: Offset(0, 8),
-                      ),
-                    ],
+                /// opener
+              
+              Lottie.asset(
+              "assets/lottie_animations/woman meditation.json",
                   ),
-                ),
-
-                SizedBox(height: 36),
-
+              SizedBox(height: 36),
+                
                 /// CTA BUTTON
                 GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()),
-                    );
-                  },
-                  child: Container(
+                onTap: () {
+                  // Menggunakan pushReplacement agar Onboarding dihapus dari stack
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  );
+                },
+                child: Container(
                     height: 56,
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -204,7 +191,7 @@ class OnboardingScreen extends StatelessWidget {
                 TestimonialCard(
                   initials: "S",
                   quote:
-                      ". I've found support, friendship, and professional help all in one place.",
+                      "I've found support, friendship, and professional help all in one place.",
                   author: "— Sarah M.",
                 ),
 
@@ -226,7 +213,7 @@ class OnboardingScreen extends StatelessWidget {
                 ),
 
                 SizedBox(height: 40),
-              ],
+              ]
             ),
           ),
         ),

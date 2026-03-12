@@ -104,6 +104,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     child: Lottie.asset(
                       "assets/lottie_animations/empty box3 (1).json",
                       width: 220,
+                    
                     ),
                   )
                 : ListView.builder(

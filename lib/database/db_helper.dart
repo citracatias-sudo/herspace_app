@@ -207,5 +207,17 @@ static Future<List<UserModel>> getOnlineListeners() async {
 
   return results.map((e) => UserModel.fromMap(e)).toList();
 }
+//Update online status
+static Future<void> updateOnlineStatus(int id, bool status) async {
+  final dbs = await db();
 
+  await dbs.update(
+    "user",
+    {
+      "isOnline": status ? 1 : 0,
+    },
+    where: "id = ?",
+    whereArgs: [id],
+  );
+}
 }

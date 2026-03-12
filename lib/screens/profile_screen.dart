@@ -31,6 +31,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     phoneController = TextEditingController(text: widget.user.phone);
     emailController = TextEditingController(text: widget.user.email);
     selectedAvatar = widget.user.avatar;
+
+    isOnline = widget.user.isOnline;
   }
 
   @override
@@ -231,11 +233,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             /// HEADER
             Container(
-              padding: EdgeInsets.symmetric(vertical: 30),
+              padding: EdgeInsets.fromLTRB(20, 40, 20, 30),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [AppColors.secondary, AppColors.primary],
-                ),
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [AppColors.secondary, AppColors.primary],
+              ),
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Column(
@@ -243,16 +247,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   GestureDetector(
                     onTap: showAvatarPicker,
-                    child: CircleAvatar(
-                      radius: 45,
-                      backgroundColor: Colors.white,
-                      child: Text(
-                        selectedAvatar,
-                        style: TextStyle(fontSize: 34),
+                    child: Container(
+                      padding: EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 10,
+                            offset: Offset(0, 4),
+                          )
+                        ],
+                      ),
+                      child: CircleAvatar(
+                        radius: 45,
+                        backgroundColor: Colors.pink[50],
+                        child: Text(
+                          selectedAvatar,
+                          style: TextStyle(fontSize: 34),
+                        ),
                       ),
                     ),
                   ),
-
                   SizedBox(height: 10),
 
                   Text(
@@ -314,17 +331,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
                 ),
                 child: SwitchListTile(
-                  title: Text("Available to Listen"),
-                  subtitle:
-                      Text("Turn on to receive speaker requests"),
-                  value: isOnline,
-                  onChanged: (value) {
-                    setState(() {
-                      isOnline = value;
-                    });
-                  },
-                ),
-              ),
+                title: Text("Available to Listen"),
+                subtitle: Text("Turn on to receive speaker requests"),
+                value: isOnline,
+                onChanged: (value) async {
+
+                  setState(() {
+                    isOnline = value;
+                  });
+
+                  await DBHelper.updateOnlineStatus(
+                    widget.user.id!,
+                    value,
+                  );
+
+                },
+              )
+            ),
 
             /// PROFILE CARD
             Container(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:herspace_app/Listener/find_listener_screen.dart';
 import 'package:herspace_app/decorations/app_colors.dart';
 import 'package:herspace_app/screens/articles_screen.dart';
+import 'package:herspace_app/screens/community_scree.dart';
 import '../models/user_model.dart';
 import '../widgets/article_card.dart';
 
@@ -174,6 +175,16 @@ class HomeDashboardScreen extends StatelessWidget {
                 color: AppColors.textPrimary,
               ),
             ),
+            TextButton(child: 
+            Text("See more"),
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(
+                builder: (_) => CommunityScreen(nickname: user.nickname,
+                ),
+                ),
+                );
+            },
+            ),
 
             SizedBox(height: 4),
 
@@ -220,11 +231,35 @@ class HomeDashboardScreen extends StatelessWidget {
             SizedBox(height: 20),
 
             /// DISCUSSION CARD
-            buildDiscussionCard(),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => CommunityScreen(
+                      nickname: user.nickname,
+                    ),
+                  ),
+                );
+              },
+              child: buildDiscussionCard(),
+            ),
 
             SizedBox(height: 14),
 
-            buildDiscussionCard(),
+             GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => CommunityScreen(
+                      nickname: user.nickname,
+                    ),
+                  ),
+                );
+              },
+              child: buildDiscussionCard(),
+            ),
 
             SizedBox(height: 30),
 

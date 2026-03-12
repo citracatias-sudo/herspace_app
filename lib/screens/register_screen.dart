@@ -274,6 +274,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             return "Invalid phone number";
                           }
 
+                    
+
                           return null;
                         },
                         decoration: InputDecoration(
