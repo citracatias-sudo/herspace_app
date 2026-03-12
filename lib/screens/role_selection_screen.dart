@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:herspace_app/database/db_helper.dart';
 import 'package:herspace_app/decorations/app_colors.dart';
+import 'package:herspace_app/models/user_model.dart';
 import 'package:herspace_app/screens/login_screen.dart';
 
 class RoleSelectionScreenHp extends StatelessWidget {
-  const RoleSelectionScreenHp({super.key});
+  final UserModel user;
+  const RoleSelectionScreenHp({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -200,15 +203,19 @@ class RoleSelectionScreenHp extends StatelessWidget {
                 ),
               ),
 
-              onPressed: () {
+              onPressed: () async {
                 Navigator.pop(context);
 
-                Navigator.push(
+                if (user.id != null) {
+                  await DBHelper.updateUserRole(user.id!, role);
+                }
+
+                Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => LoginScreen()),
+                  (route) => false,
                 );
               },
-
               child: Text("Accept"),
             ),
           ],

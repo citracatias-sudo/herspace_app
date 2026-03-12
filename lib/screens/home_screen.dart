@@ -7,7 +7,6 @@ import '../models/user_model.dart';
 import 'mood_tracker_screen.dart';
 import 'home_dashboard_screen.dart';
 
-
 class HomeScreen extends StatefulWidget {
   final UserModel user;
 
@@ -20,66 +19,102 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int selectedIndex = 0;
 
-  late final List<Widget> pages = [
-    HomeDashboardScreen(user: widget.user),
-    MessagesScreen(nickname: widget.user.nickname),
-    ProfileScreen(user: widget.user),
-    CallScreen(),
-    MoodTrackerScreen(),
-  ];
+  late List<Widget> pages;
+
+  @override
+  void initState() {
+    super.initState();
+
+    //memanggil tampilan berdasar user role
+
+    if (widget.user.role == "listener") {
+      pages = [
+        HomeDashboardScreen(user: widget.user),
+        MessagesScreen(nickname: widget.user.nickname),
+        ProfileScreen(user: widget.user),
+        CallScreen(),
+      ];
+    } else {
+      pages = [
+        HomeDashboardScreen(user: widget.user),
+        MessagesScreen(nickname: widget.user.nickname),
+        ProfileScreen(user: widget.user),
+        CallScreen(),
+        MoodTrackerScreen(),
+      ];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: pages[selectedIndex],
+      body: pages[selectedIndex.clamp(0, pages.length - 1)], //proteksi index
 
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: selectedIndex,
         selectedItemColor: AppColors.primary,
-        unselectedItemColor:  Color.fromARGB(255, 31, 30, 30),
+        unselectedItemColor: Color.fromARGB(255, 31, 30, 30),
         onTap: (index) {
           setState(() {
             selectedIndex = index;
           });
         },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: "Home",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat_bubble_outline),
-            label: "Chat",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_2_rounded),
-            label: "Profile",
-          ),
-          BottomNavigationBarItem(
-            icon: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Icon(Icons.call_outlined),
-
-                Positioned(
-                  right: -6,
-                  top: -4,
-                  child: Icon(
-                    Icons.workspace_premium,
-                    size: 14,
-                    color: Colors.amber,
+        items: widget.user.role == "listener"
+            ? [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home_outlined),
+                  label: "Home",
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.chat_bubble_outline),
+                  label: "Chat",
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person_2_rounded),
+                  label: "Profile",
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.call_outlined),
+                  label: "Call",
+                ),
+              ]
+            : [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home_outlined),
+                  label: "Home",
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.chat_bubble_outline),
+                  label: "Chat",
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person_2_rounded),
+                  label: "Profile",
+                ),
+                BottomNavigationBarItem(
+                  icon: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Icon(Icons.call_outlined),
+                      Positioned(
+                        right: -6,
+                        top: -4,
+                        child: Icon(
+                          Icons.workspace_premium,
+                          size: 14,
+                          color: Colors.amber,
+                        ),
+                      ),
+                    ],
                   ),
+                  label: "Call",
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.favorite_border),
+                  label: "Mood",
                 ),
               ],
-            ),
-            label: "Call",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite_border),
-            label: "Mood",
-          ),
-        ],
       ),
     );
   }

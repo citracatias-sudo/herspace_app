@@ -34,11 +34,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     "🌹",
     "🍂",
     "🌺",
-    "☯️"
-    
+    "☯️",
   ];
 
   String selectedAvatar = "😊";
+  bool isOnline = false;
 
   @override
   void initState() {
@@ -71,7 +71,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 5,
-              
             ),
 
             itemCount: avatars.length,
@@ -168,8 +167,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       appBar: AppBar(
         title: Text("Profile"),
-        backgroundColor: Color(0xFFA78BFA),
-        foregroundColor: Colors.white,
+        centerTitle: true,
+        elevation: 0,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppColors.secondary, AppColors.primary],
+            ),
+          ),
+        ),
       ),
 
       body: Padding(
@@ -183,8 +189,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               child: CircleAvatar(
                 radius: 40,
-                backgroundColor: Color(0xFFF9A8D4),
-
+                backgroundColor: AppColors.secondary.withOpacity(0.5),
                 child: Text(selectedAvatar, style: TextStyle(fontSize: 28)),
               ),
             ),
@@ -200,6 +205,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
 
             SizedBox(height: 30),
+
+            //available to listen
+            if (widget.user.role == "listener")
+              Container(
+                padding: EdgeInsets.all(20),
+
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
+                ),
+
+                child: SwitchListTile(
+                  title: Text("Available to Listen"),
+                  subtitle: Text("Turn on to receive speaker requests"),
+
+                  value: isOnline,
+
+                  onChanged: (value) {
+                    setState(() {
+                      isOnline = value;
+                    });
+                  },
+                ),
+              ),
 
             /// PROFILE CARD
             Container(

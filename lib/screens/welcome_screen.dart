@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'role_selection_screen.dart';
+import 'package:herspace_app/screens/login_screen.dart';
+
 
 class WelcomeScreenHp extends StatelessWidget {
   const WelcomeScreenHp({super.key});
@@ -23,13 +24,13 @@ class WelcomeScreenHp extends StatelessWidget {
               SizedBox(height: 260),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
+                  Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => RoleSelectionScreenHp(),
-                    ),
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                    (Route) => false,
                   );
                 },
+
                 child: Text("Start"),
               ),
             ],

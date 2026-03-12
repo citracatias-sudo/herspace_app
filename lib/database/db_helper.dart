@@ -20,6 +20,10 @@ class DBHelper {
         await db.execute(
           'CREATE TABLE chat(id INTEGER PRIMARY KEY AUTOINCREMENT, roomId TEXT, message TEXT, sender TEXT, time TEXT)',
         );
+
+        await db.execute(
+          'CREATE TABLE sessions(id INTEGER PRIMARY KEY AUTOINCREMENT, roomId TEXT, duration INTEGER, rating INTEGER, report TEXT)',
+        );
       },
       version: 1,
     );
@@ -86,24 +90,39 @@ class DBHelper {
     final dbs = await db();
 
     final List<Map<String, dynamic>> results = await dbs.query("chat");
-    
 
     return results.map((e) => ChatModel.fromMap(e)).toList();
   }
 
   // Get Messages by Room
-static Future<List<ChatModel>> getMessagesByRoom(String roomId) async {
-  final dbs = await db();
+  static Future<List<ChatModel>> getMessagesByRoom(String roomId) async {
+    final dbs = await db();
 
-  final List<Map<String, dynamic>> results = await dbs.query(
-    "chat",
-    where: "roomId = ?",
-    whereArgs: [roomId],
-    orderBy: "id ASC",
-  );
+    final List<Map<String, dynamic>> results = await dbs.query(
+      "chat",
+      where: "roomId = ?",
+      whereArgs: [roomId],
+      orderBy: "id ASC",
+    );
 
-  return results.map((e) => ChatModel.fromMap(e)).toList();
-}
+    return results.map((e) => ChatModel.fromMap(e)).toList();
+  }
+
+  static Future<List<ChatModel>> getLastMessages() async {
+    final dbs = await db();
+
+    final List<Map<String, dynamic>> results = await dbs.rawQuery('''
+    SELECT * FROM chat
+    WHERE id IN (
+      SELECT MAX(id)
+      FROM chat
+      GROUP BY roomId
+    )
+  ''');
+
+    return results.map((e) => ChatModel.fromMap(e)).toList();
+  }
+  //mengembalikan list chatModel
 
   //Delete Message
   static Future<void> deleteMessage(int id) async {
@@ -111,20 +130,6 @@ static Future<List<ChatModel>> getMessagesByRoom(String roomId) async {
 
     await dbs.delete("chat", where: "id = ?", whereArgs: [id]);
   }
-
-  // Get Last Message per Room
-static Future<List<Map<String, dynamic>>> getLastMessages() async {
-  final dbs = await db();
-
-  final result = await dbs.rawQuery('''
-    SELECT roomId, message, sender, MAX(id) as lastId
-    FROM chat
-    GROUP BY roomId
-    ORDER BY lastId DESC
-  ''');
-
-  return result;
-}
 
   // avatar
   static Future<void> updateAvatar(int id, String avatar) async {
@@ -148,5 +153,12 @@ static Future<List<Map<String, dynamic>>> getLastMessages() async {
       where: "id = ?",
       whereArgs: [id],
     );
+  }
+
+  //user role
+  static Future<void> updateUserRole(int id, String role) async {
+    final dbs = await db();
+
+    await dbs.update("user", {"role": role}, where: "id = ?", whereArgs: [id]);
   }
 }

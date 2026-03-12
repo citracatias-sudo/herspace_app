@@ -67,43 +67,51 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> registerUser() async {
     if (!formKey.currentState!.validate()) return;
 
-    String nickname = nicknameController.text;
+    try {
+      String nickname = nicknameController.text;
 
-    if (nickname.isEmpty) {
-      nickname = generateNickname();
+      if (nickname.isEmpty) {
+        nickname = generateNickname();
+      }
+
+      UserModel newUser = UserModel(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+        phone: phoneController.text.trim(),
+        role: widget.role,
+        nickname: nickname,
+        avatar: "😊",
+      );
+
+      await DBHelper.registerUser(newUser);
+
+      final UserModel? user = await DBHelper.loginUser(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      showMessage("Welcome $nickname");
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RoleSelectionScreenHp(user: user!),
+        ),
+      );
+    } catch (e) {
+      showMessage("Register failed: $e"); //print error
     }
-
-    UserModel user = UserModel(
-      email: emailController.text.trim(),
-      password: passwordController.text.trim(),
-      phone: phoneController.text.trim(),
-      role: widget.role,
-      nickname: nickname,
-      avatar: "😊",
-    );
-
-    await DBHelper.registerUser(user);
-
-    showMessage("Welcome $nickname");
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => RoleSelectionScreenHp()),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 28),
-
           child: Form(
             key: formKey,
-
             child: Column(
               children: [
                 SizedBox(height: 30),
@@ -113,7 +121,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: Image.asset(
                     "assets/images/logo_herspace (2)-Photoroom.png",
                     width: 150,
-                    filterQuality: FilterQuality.high,
                   ),
                 ),
 
@@ -152,7 +159,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ],
                   ),
-
                   child: Column(
                     children: [
                       /// NICKNAME

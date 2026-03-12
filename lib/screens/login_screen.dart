@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:herspace_app/decorations/app_colors.dart';
 import 'package:herspace_app/screens/home_screen.dart';
-import 'package:herspace_app/screens/listener_dashboard_screen.dart';
+import 'package:herspace_app/Listener/listener_dashboard_screen.dart';
 import 'package:herspace_app/widgets/gradient_button.dart';
 import '../database/db_helper.dart';
 import '../models/user_model.dart';
@@ -39,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (login != null) {
       showMessage("Login success");
 
-      if (login.role == "listener") {
+      if (login.role.toLowerCase() == "listener") {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(

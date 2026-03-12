@@ -6,6 +6,7 @@ class UserModel {
   final String role;
   final String nickname;
   final String avatar;
+  final bool isOnline;
 
   UserModel({
     this.id,
@@ -15,6 +16,7 @@ class UserModel {
     required this.role,
     required this.nickname,
     required this.avatar,
+    this.isOnline = false,
   });
 
   Map<String, dynamic> toMap() {
@@ -26,6 +28,7 @@ class UserModel {
       "role": role,
       "nickname": nickname,
       "avatar": avatar,
+      "isOnline": isOnline,
     };
   }
 
@@ -38,6 +41,7 @@ class UserModel {
       role: map["role"],
       nickname: map['nickname'],
       avatar: map['avatar'] ?? "😊",
+      isOnline: map['isOnline'] ?? false,
     );
   }
 }
