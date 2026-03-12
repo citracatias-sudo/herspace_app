@@ -36,25 +36,30 @@ class _LoginScreenState extends State<LoginScreen> {
       password: passwordController.text.trim(),
     );
 
-    if (login != null) {
-      showMessage("Login success");
+if (login != null) {
+  showMessage("Login success");
 
-      if (login.role.toLowerCase() == "listener") {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => ListenerDashboardScreen(user: login),
-          ),
-        );
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => HomeScreen(user: login)),
-        );
-      }
-    } else {
-      showMessage("Email or password invalid");
-    }
+  if (login.role.toLowerCase() == "listener") {
+    // Gunakan pushAndRemoveUntil agar listener tidak bisa back ke login
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ListenerDashboardScreen(user: login),
+      ),
+      (route) => false, // Menghapus semua halaman sebelumnya
+    );
+  } else {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (_) => HomeScreen(user: login),
+      ),
+      (route) => false, // Menghapus semua halaman sebelumnya
+    );
+  }
+} else {
+  showMessage("Email or password invalid");
+}
   }
 
   @override
@@ -73,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 /// LOGO
                 Center(
                   child: Image.asset(
-                    "assets/images/logo_herspace (2)-Photoroom.png",
+                    "assets/images/logoHer.png",
                     width: 150,
                     filterQuality: FilterQuality.high,
                   ),

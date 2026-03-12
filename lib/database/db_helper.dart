@@ -1,3 +1,5 @@
+import 'package:herspace_app/models/discussion_model.dart';
+
 import '../models/user_model.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -11,7 +13,7 @@ class DBHelper {
       join(dbPath, 'my_app.db'),
       onCreate: (db, version) async {
         await db.execute(
-          'CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, password TEXT, phone TEXT, role TEXT, nickname TEXT, avatar TEXT)',
+          'CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, password TEXT, phone TEXT, role TEXT, nickname TEXT, avatar TEXT, isOnline INTEGER)',
         );
 
         await db.execute(
@@ -24,6 +26,9 @@ class DBHelper {
         await db.execute(
           'CREATE TABLE sessions(id INTEGER PRIMARY KEY AUTOINCREMENT, roomId TEXT, duration INTEGER, rating INTEGER, report TEXT)',
         );
+        await db.execute('''CREATE TABLE discussion(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT, author TEXT, topic TEXT, likes INTEGER
+)
+''');
       },
       version: 1,
     );
@@ -155,10 +160,52 @@ class DBHelper {
     );
   }
 
-  //user role
+  //User Role
   static Future<void> updateUserRole(int id, String role) async {
     final dbs = await db();
 
     await dbs.update("user", {"role": role}, where: "id = ?", whereArgs: [id]);
   }
+
+//Insert Discussion
+  static Future<void> insertDiscussion(DiscussionModel discussion) async {
+  final dbs = await db();
+  await dbs.insert("discussion", discussion.toMap());
+}
+//Get Discussion
+  static Future<List<DiscussionModel>> getDiscussions() async {
+  final dbs = await db();
+
+  final results = await dbs.query(
+    "discussion",
+    orderBy: "id DESC",
+  );
+
+  return results.map((e) => DiscussionModel.fromMap(e)).toList();
+}
+//Like Post
+  static Future<void> likeDiscussion(int id, int likes) async {
+  final dbs = await db();
+
+  await dbs.update(
+    "discussion",
+    {"likes": likes + 1},
+    where: "id = ?",
+    whereArgs: [id],
+  );
+  
+} 
+//Get Online User
+static Future<List<UserModel>> getOnlineListeners() async {
+  final dbs = await db();
+
+  final results = await dbs.query(
+    "user",
+    where: "role = ? AND isOnline = ?",
+    whereArgs: ["listener", 1],
+  );
+
+  return results.map((e) => UserModel.fromMap(e)).toList();
+}
+
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:herspace_app/Listener/find_listener_scree.dart';
+import 'package:herspace_app/Listener/find_listener_screen.dart';
 import 'package:herspace_app/decorations/app_colors.dart';
 import 'package:herspace_app/screens/articles_screen.dart';
 import '../models/user_model.dart';
@@ -234,7 +234,7 @@ class HomeDashboardScreen extends StatelessWidget {
               children: [
                 Text(
                   "Recommended for You",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 20),
                 ),
 
                 TextButton(

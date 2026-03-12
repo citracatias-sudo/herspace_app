@@ -204,7 +204,7 @@ class OnboardingScreen extends StatelessWidget {
                 TestimonialCard(
                   initials: "S",
                   quote:
-                      "This community has been a lifeline for me. I've found support, friendship, and professional help all in one place.",
+                      ". I've found support, friendship, and professional help all in one place.",
                   author: "— Sarah M.",
                 ),
 
@@ -221,7 +221,7 @@ class OnboardingScreen extends StatelessWidget {
 
                 TestimonialCard(
                   initials: "E",
-                  quote: "Connecting with a therapist here changed my life.",
+                  quote: "Talking with the listeners here changed my life.",
                   author: "— Emma L.",
                 ),
 

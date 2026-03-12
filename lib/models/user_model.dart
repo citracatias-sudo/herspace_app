@@ -28,7 +28,7 @@ class UserModel {
       "role": role,
       "nickname": nickname,
       "avatar": avatar,
-      "isOnline": isOnline,
+      "isOnline": isOnline ? 1:0,
     };
   }
 
@@ -41,7 +41,7 @@ class UserModel {
       role: map["role"],
       nickname: map['nickname'],
       avatar: map['avatar'] ?? "😊",
-      isOnline: map['isOnline'] ?? false,
+      isOnline: map['isOnline'] == 1,
     );
   }
 }

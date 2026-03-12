@@ -80,7 +80,7 @@ class _SplashScreenHpState extends State<SplashScreenHp>
                 children: [
                   /// LOGO
                   Image.asset(
-                    'assets/images/logo_herspace (2)-Photoroom.png',
+                    'assets/images/logoHer.png',
                     width: 400,
                     filterQuality: FilterQuality.high,
                   ),

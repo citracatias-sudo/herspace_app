@@ -15,26 +15,11 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late TextEditingController nicknameController;
   late TextEditingController emailController;
   late TextEditingController phoneController;
 
   List<String> avatars = [
-    "😊",
-    "😎",
-    "🌸",
-    "🌙",
-    "🐱",
-    "🐰",
-    "🐼",
-    "🍓",
-    "⭐",
-    "🦋",
-    "🌷",
-    "🌹",
-    "🍂",
-    "🌺",
-    "☯️",
+    "😊","😎","🌸","🌙","🐱","🐰","🐼","🍓","⭐","🦋","🌷","🌹","🍂","🌺","☯️"
   ];
 
   String selectedAvatar = "😊";
@@ -58,23 +43,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void showAvatarPicker() {
     showModalBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-
+    
       builder: (context) {
         return Padding(
           padding: EdgeInsets.all(20),
-
           child: GridView.builder(
             shrinkWrap: true,
-
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 5,
-            ),
-
+            gridDelegate:
+                SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 5),
             itemCount: avatars.length,
-
             itemBuilder: (context, index) {
               String avatar = avatars[index];
 
@@ -88,15 +65,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   Navigator.pop(context);
                 },
-
                 child: Container(
                   margin: EdgeInsets.all(6),
-
                   decoration: BoxDecoration(
                     color: Colors.pink[50],
                     borderRadius: BorderRadius.circular(10),
                   ),
-
                   child: Center(
                     child: Text(avatar, style: TextStyle(fontSize: 24)),
                   ),
@@ -109,61 +83,133 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void editProfile() {
+  void editEmail() {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Edit Profile"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: 10),
-
-              TextField(
-                controller: emailController,
-                decoration: InputDecoration(labelText: "Email"),
-              ),
-
-              SizedBox(height: 10),
-
-              TextField(
-                controller: phoneController,
-                decoration: InputDecoration(labelText: "Phone"),
-              ),
-            ],
+          title: Text("Edit Email"),
+          content: TextField(
+            controller: emailController,
+            decoration: InputDecoration(labelText: "Email"),
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
               child: Text("Cancel"),
+              onPressed: () => Navigator.pop(context),
             ),
-
             ElevatedButton(
+              child: Text("Save"),
               onPressed: () async {
                 await DBHelper.updateUser(
                   widget.user.id!,
                   emailController.text,
                   phoneController.text,
                 );
-
                 setState(() {});
                 Navigator.pop(context);
               },
-              child: Text("Save"),
-            ),
+            )
           ],
         );
       },
     );
   }
 
+  void editPhone() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Edit Phone"),
+          content: TextField(
+            controller: phoneController,
+            decoration: InputDecoration(labelText: "Phone"),
+          ),
+          actions: [
+            TextButton(
+              child: Text("Cancel"),
+              onPressed: () => Navigator.pop(context),
+            ),
+            ElevatedButton(
+              child: Text("Save"),
+              onPressed: () async {
+                await DBHelper.updateUser(
+                  widget.user.id!,
+                  emailController.text,
+                  phoneController.text,
+                );
+                setState(() {});
+                Navigator.pop(context);
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  Widget buildStat(String title, String value) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        SizedBox(height: 4),
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 12,
+            color: AppColors.textSecondary,
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget buildProfileItem(
+    IconData icon,
+    String title,
+    String value, {
+    VoidCallback? onEdit,
+  }) {
+    return Row(
+      children: [
+        Icon(icon, color: AppColors.primary),
+        SizedBox(width: 12),
+
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title,
+                  style: TextStyle(
+                      fontSize: 12, color: AppColors.textSecondary)),
+              Text(value,
+                  style:
+                      TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+            ],
+          ),
+        ),
+
+        if (onEdit != null)
+          IconButton(
+            icon: Icon(Icons.edit_outlined, color: AppColors.secondary),
+            onPressed: onEdit,
+          ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFFF6F9),
+      backgroundColor: AppColors.background,
 
       appBar: AppBar(
         title: Text("Profile"),
@@ -178,51 +224,100 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
 
-      body: Padding(
+      body: SingleChildScrollView(
         padding: EdgeInsets.all(20),
-
         child: Column(
           children: [
-            /// AVATAR
-            GestureDetector(
-              onTap: showAvatarPicker,
 
-              child: CircleAvatar(
-                radius: 40,
-                backgroundColor: AppColors.secondary.withOpacity(0.5),
-                child: Text(selectedAvatar, style: TextStyle(fontSize: 28)),
+            /// HEADER
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 30),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [AppColors.secondary, AppColors.primary],
+                ),
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Column(
+                children: [
+
+                  GestureDetector(
+                    onTap: showAvatarPicker,
+                    child: CircleAvatar(
+                      radius: 45,
+                      backgroundColor: Colors.white,
+                      child: Text(
+                        selectedAvatar,
+                        style: TextStyle(fontSize: 34),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 10),
+
+                  Text(
+                    widget.user.nickname,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+
+                  SizedBox(height: 6),
+
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.25),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      widget.user.role == "listener"
+                          ? "Listener 🎧"
+                          : "Speaker 💬",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
 
-            SizedBox(height: 10),
+            SizedBox(height: 20),
 
-            GestureDetector(
-              onTap: editProfile,
-              child: Text(
-                widget.user.nickname,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
+            /// STATS
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                buildStat("Sessions", "12"),
+                buildStat("Rating", "⭐4.8"),
+                buildStat("Community", "5"),
+              ],
             ),
 
-            SizedBox(height: 30),
+            SizedBox(height: 25),
 
-            //available to listen
+            /// LISTENER ONLINE
             if (widget.user.role == "listener")
               Container(
                 padding: EdgeInsets.all(20),
-
+                margin: EdgeInsets.only(bottom: 20),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
-                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
+                  boxShadow: [
+                    BoxShadow(color: Colors.black12, blurRadius: 8)
+                  ],
                 ),
-
                 child: SwitchListTile(
                   title: Text("Available to Listen"),
-                  subtitle: Text("Turn on to receive speaker requests"),
-
+                  subtitle:
+                      Text("Turn on to receive speaker requests"),
                   value: isOnline,
-
                   onChanged: (value) {
                     setState(() {
                       isOnline = value;
@@ -234,19 +329,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
             /// PROFILE CARD
             Container(
               padding: EdgeInsets.all(20),
-
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 10,
+                    offset: Offset(0, 4),
+                  ),
+                ],
               ),
-
               child: Column(
                 children: [
+
                   buildProfileItem(
                     Icons.email_outlined,
                     "Email",
                     emailController.text,
+                    onEdit: editEmail,
                   ),
 
                   Divider(),
@@ -255,6 +356,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Icons.phone_outlined,
                     "Phone",
                     phoneController.text,
+                    onEdit: editPhone,
                   ),
 
                   Divider(),
@@ -262,7 +364,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   buildProfileItem(
                     Icons.person_outline,
                     "Role",
-                    widget.user.role,
+                    widget.user.role.toUpperCase(),
                   ),
                 ],
               ),
@@ -270,50 +372,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             SizedBox(height: 30),
 
-            /// LOGOUT BUTTON
+            /// LOGOUT
             GradientButton(
               text: "Logout",
               onPressed: () {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
-                  (Route) => false,
+                  MaterialPageRoute(builder: (_) => LoginScreen()),
+                  (route) => false,
                 );
               },
             ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget buildProfileItem(IconData icon, String title, String value) {
-    return Row(
-      children: [
-        Icon(icon, color: Color(0xFFA78BFA)),
-
-        SizedBox(width: 12),
-
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: TextStyle(fontSize: 12, color: Colors.grey)),
-
-              Text(
-                value,
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
-              ),
-            ],
-          ),
-        ),
-
-        /// EDIT BUTTON
-        IconButton(
-          icon: Icon(Icons.edit_outlined, color: AppColors.secondary),
-          onPressed: editProfile,
-        ),
-      ],
     );
   }
 }

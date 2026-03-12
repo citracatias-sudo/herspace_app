@@ -119,7 +119,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 /// LOGO
                 Center(
                   child: Image.asset(
-                    "assets/images/logo_herspace (2)-Photoroom.png",
+                    "assets/images/logoHer.png",
                     width: 150,
                   ),
                 ),

@@ -16,7 +16,7 @@ class ArticleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 300,
+      height: 200,
       margin: EdgeInsets.only(bottom: 16),
 
       decoration: BoxDecoration(
@@ -33,7 +33,7 @@ class ArticleCard extends StatelessWidget {
 
             child: Image.network(
               image,
-              height: 120,
+              height: 100,
               width: double.infinity,
               fit: BoxFit.cover,
             ),
