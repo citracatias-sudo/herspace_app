@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:herspace_app/decorations/app_colors.dart';
-import 'package:herspace_app/screens/community_scree.dart';
+import 'package:herspace_app/screens/community_screen.dart';
 import 'package:herspace_app/screens/messages_screen.dart';
 import 'package:herspace_app/database/db_helper.dart';
 import 'package:herspace_app/screens/login_screen.dart';
@@ -211,18 +211,11 @@ class _ListenerDashboardScreenState extends State<ListenerDashboardScreen> {
             SizedBox(height: 30),
 
             /// ACTIVE CHATS
-            Text(
-              "Active Conversations",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-
-            SizedBox(height: 12),
-
             FutureBuilder(
               future: DBHelper.getListenerRooms(user.id!),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return CircularProgressIndicator();
+                  return Center(child: CircularProgressIndicator());
                 }
 
                 final rooms = snapshot.data as List<Map<String, dynamic>>;
@@ -235,17 +228,31 @@ class _ListenerDashboardScreenState extends State<ListenerDashboardScreen> {
                   children: rooms.map((room) {
                     String roomId = room["roomId"];
 
-                    return conversationCard(
-                      context,
-                      "Speaker",
-                      "Tap to open chat",
-                      roomId,
+                    return ListTile(
+                      leading: CircleAvatar(child: Icon(Icons.person)),
+
+                      title: Text("Speaker"),
+
+                      subtitle: Text("Tap to open chat"),
+
+                      trailing: Icon(Icons.mark_chat_unread, color: Colors.red),
+
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => MessagesScreen(
+                              roomId: roomId,
+                              nickname: "Speaker",
+                            ),
+                          ),
+                        );
+                      },
                     );
                   }).toList(),
                 );
               },
             ),
-            SizedBox(height: 30),
 
             /// QUICK ACTIONS
             Text(

@@ -5,7 +5,7 @@ import 'package:lottie/lottie.dart';
 class CallScreen extends StatelessWidget {
   const CallScreen({super.key});
 
-   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Voice Session")),
@@ -13,15 +13,8 @@ class CallScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-
-            Icon(
-              Icons.call,
-              size: 80,
-              color: AppColors.button,
-            ),
-
             SizedBox(height: 20),
-             Lottie.asset("assets/lottie_animations/Coming soon.json"),
+            Lottie.asset("assets/lottie_animations/Coming soon.json"),
             Text(
               "Voice call feature coming soon",
               style: TextStyle(fontSize: 18),

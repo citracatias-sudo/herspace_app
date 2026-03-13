@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:herspace_app/decorations/app_colors.dart';
-import 'chat_screen.dart';
-import '../models/chat_model.dart';
 import '../database/db_helper.dart';
+import '../models/chat_model.dart';
+import '../decorations/app_colors.dart';
+import 'chat_screen.dart';
 
 class MessagesScreen extends StatefulWidget {
   final String roomId;
@@ -18,49 +18,15 @@ class MessagesScreen extends StatefulWidget {
   State<MessagesScreen> createState() => _MessagesScreenState();
 }
 
-@override
-State<MessagesScreen> createState() => _MessagesScreenState();
-
 class _MessagesScreenState extends State<MessagesScreen> {
-  List<ChatModel> lastMessages = [];
-
-  @override
-  void initState() {
-    super.initState();
-    loadLastMessages();
-  }
-
-  Future<void> loadLastMessages() async {
-    lastMessages = await DBHelper.getLastMessages();
-    setState(() {});
-  }
-
-  ChatModel? getLastMessage(String roomId) {
-    try {
-      return lastMessages.firstWhere((chat) => chat.roomId == roomId);
-    } catch (e) {
-      return null;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> listeners = [
-      {"name": "Listener Maya", "roomId": "room_maya", "online": true},
-      {"name": "Listener Sarah", "roomId": "room_sarah", "online": false},
-      {"name": "Listener Aisha", "roomId": "room_aisha", "online": true},
-      {"name": "Listener Bella", "roomId": "room_bella", "online": false},
-      {"name": "Listener Jessie", "roomId": "room_jessie", "online": true},
-      {"name": "Listener Nami", "roomId": "room_nami", "online": false},
-    ];
-
     return Scaffold(
       backgroundColor: AppColors.background,
 
       appBar: AppBar(
-        title: Text("Messages"),
+        title: const Text("Messages"),
         centerTitle: true,
-        elevation: 0,
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -70,156 +36,55 @@ class _MessagesScreenState extends State<MessagesScreen> {
         ),
       ),
 
-      body: Column(
-        children: [
-          /// SEARCH BAR
-          Padding(
-            padding: EdgeInsets.all(16),
+      body: FutureBuilder(
+        future: DBHelper.getLastMessages(),
 
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(14),
-              ),
+          final chats = snapshot.data as List<ChatModel>;
 
-              child: TextField(
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  icon: Icon(Icons.search),
-                  hintText: "Search conversations...",
+          if (chats.isEmpty) {
+            return const Center(child: Text("No conversations yet"));
+          }
+
+          return ListView.builder(
+            itemCount: chats.length,
+
+            itemBuilder: (context, index) {
+              final chat = chats[index];
+
+              return ListTile(
+                leading: const CircleAvatar(child: Icon(Icons.person)),
+
+                title: Text(chat.sender),
+
+                subtitle: Text(
+                  chat.message,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-            ),
-          ),
 
-          /// CHAT LIST
-          Expanded(
-            child: ListView.builder(
-              itemCount: listeners.length,
+                trailing: Text(chat.time, style: const TextStyle(fontSize: 12)),
 
-              itemBuilder: (context, index) {
-                final listener = listeners[index];
-                final lastMessage = getLastMessage(listener["roomId"]);
-
-                return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => ChatScreen(
-                            nickname: widget.nickname,
-                            roomId: listener["roomId"],
-                            listenerName: listener["name"],
-                          ),
-                        ),
-                      ).then((_) {
-                        loadLastMessages();
-                      });
-                    },
-
-                    child: Container(
-                      padding: EdgeInsets.all(14),
-
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-
-                        boxShadow: [
-                          BoxShadow(color: Colors.black12, blurRadius: 6),
-                        ],
-                      ),
-
-                      child: Row(
-                        children: [
-                          /// AVATAR
-                          Stack(
-                            children: [
-                              CircleAvatar(
-                                radius: 26,
-                                backgroundColor: AppColors.secondary,
-                                child: Text(
-                                  listener["name"][9],
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-
-                              if (listener["online"])
-                                Positioned(
-                                  bottom: 0,
-                                  right: 0,
-                                  child: Container(
-                                    height: 12,
-                                    width: 12,
-                                    decoration: BoxDecoration(
-                                      color: Colors.green,
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: Colors.white,
-                                        width: 2,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-
-                          SizedBox(width: 14),
-
-                          /// MESSAGE INFO
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-
-                              children: [
-                                Text(
-                                  listener["name"],
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                  ),
-                                ),
-
-                                SizedBox(height: 4),
-
-                                Text(
-                                  lastMessage?.message ??
-                                      "Tap to start conversation",
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-
-                                  style: TextStyle(
-                                    color: AppColors.textSecondary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          /// TIME
-                          Text(
-                            lastMessage?.time ?? "",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
-                        ],
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ChatScreen(
+                        roomId: chat.roomId,
+                        nickname: widget.nickname,
+                        listenerName: chat.sender,
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
+                  );
+                },
+              );
+            },
+          );
+        },
       ),
     );
   }

@@ -273,10 +273,22 @@ class DBHelper {
     return results.map((e) => UserModel.fromMap(e)).toList();
   }
 
-  /// CREATE CHAT ROOM
-  static Future<String> createRoom(int speakerId, int listenerId) async {
+  /// GET OR CREATE CHAT ROOM
+  static Future<String> getOrCreateRoom(int speakerId, int listenerId) async {
     final dbs = await db();
 
+    final result = await dbs.query(
+      "chat_rooms",
+      where: "speakerId = ? AND listenerId = ?",
+      whereArgs: [speakerId, listenerId],
+    );
+
+    /// ROOM SUDAH ADA
+    if (result.isNotEmpty) {
+      return result.first["roomId"] as String;
+    }
+
+    /// BUAT ROOM BARU
     String roomId = "${speakerId}_$listenerId";
 
     await dbs.insert("chat_rooms", {
@@ -300,6 +312,7 @@ class DBHelper {
       whereArgs: [id],
     );
   }
+
   //Chat Rooms Listener
   static Future<List<Map<String, dynamic>>> getListenerRooms(
     int listenerId,

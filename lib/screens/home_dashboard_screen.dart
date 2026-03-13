@@ -1,11 +1,10 @@
-import 'dart:nativewrappers/_internal/vm/lib/ffi_patch.dart';
-
 import 'package:flutter/material.dart';
 import 'package:herspace_app/Listener/listener_active_screen.dart';
 import 'package:herspace_app/database/db_helper.dart';
 import 'package:herspace_app/decorations/app_colors.dart';
 import 'package:herspace_app/screens/articles_screen.dart';
-import 'package:herspace_app/screens/community_scree.dart';
+import 'package:herspace_app/screens/community_screen.dart';
+import 'package:herspace_app/screens/messages_screen.dart';
 import '../models/user_model.dart';
 import '../widgets/article_card.dart';
 
@@ -256,32 +255,28 @@ class HomeDashboardScreen extends StatelessWidget {
             SizedBox(height: 20),
 
             /// ACTIVE LISTENERS
-            FutureBuilder(
+            FutureBuilder<List<UserModel>>(
               future: DBHelper.getOnlineListeners(),
-
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
 
-                if (!snapshot.hasData) {
-                  return SizedBox();
-                }
-
-                final listeners = snapshot.data as List<UserModel>;
-
-                if (listeners.isEmpty) {
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Text(
                     "No listener available right now",
                     style: TextStyle(color: AppColors.textSecondary),
                   );
                 }
 
-                SizedBox(height: 20);
+                final listeners = snapshot.data!;
+
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const SizedBox(height: 20),
+
+                    const Text(
                       "Active Listeners",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
@@ -289,11 +284,10 @@ class HomeDashboardScreen extends StatelessWidget {
                       ),
                     ),
 
-                    SizedBox(height: 20),
+                    const SizedBox(height: 14),
 
                     SizedBox(
                       height: 70,
-
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: listeners.length,
@@ -301,39 +295,79 @@ class HomeDashboardScreen extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final listener = listeners[index];
 
-                          return Container(
-                            margin: EdgeInsets.only(right: 12),
+                          return GestureDetector(
+                            onTap: () async {
+                              String roomId = await DBHelper.getOrCreateRoom(
+                                user.id!,
+                                listener.id!,
+                              );
 
-                            child: Column(
-                              children: [
-                                CircleAvatar(
-                                  radius: 22,
-                                  backgroundColor: AppColors.primary,
-                                  child: Text(
-                                    listener.nickname[0].toUpperCase(),
-                                    style: TextStyle(color: Colors.white),
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => MessagesScreen(
+                                    roomId: roomId,
+                                    nickname: listener.nickname,
                                   ),
                                 ),
+                              );
+                            },
 
-                                SizedBox(height: 4),
+                            child: Container(
+                              margin: const EdgeInsets.only(right: 12),
 
-                                Text(
-                                  listener.nickname,
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                              ],
+                              child: Column(
+                                children: [
+                                  Stack(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 22,
+                                        backgroundColor: AppColors.primary,
+                                        child: Text(
+                                          listener.nickname[0].toUpperCase(),
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+
+                                      /// ONLINE INDICATOR
+                                      Positioned(
+                                        bottom: 0,
+                                        right: 0,
+                                        child: Container(
+                                          height: 10,
+                                          width: 10,
+                                          decoration: BoxDecoration(
+                                            color: Colors.green,
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                              color: Colors.white,
+                                              width: 2,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
+                                  const SizedBox(height: 4),
+
+                                  Text(
+                                    listener.nickname,
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                ],
+                              ),
                             ),
                           );
                         },
                       ),
                     ),
-
-                    SizedBox(height: 20),
                   ],
                 );
               },
             ),
-           
 
             /// TOPICS
             SizedBox(
@@ -374,7 +408,7 @@ class HomeDashboardScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text("Recommended for You", style: TextStyle(fontSize: 20)),
-              
+
                 TextButton(
                   onPressed: () {
                     Navigator.push(
