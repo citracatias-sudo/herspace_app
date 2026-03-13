@@ -1,5 +1,8 @@
+import 'dart:nativewrappers/_internal/vm/lib/ffi_patch.dart';
+
 import 'package:flutter/material.dart';
-import 'package:herspace_app/Listener/find_listener_screen.dart';
+import 'package:herspace_app/Listener/listener_active_screen.dart';
+import 'package:herspace_app/database/db_helper.dart';
 import 'package:herspace_app/decorations/app_colors.dart';
 import 'package:herspace_app/screens/articles_screen.dart';
 import 'package:herspace_app/screens/community_scree.dart';
@@ -93,12 +96,10 @@ class HomeDashboardScreen extends StatelessWidget {
             /// SEARCH
             Container(
               padding: EdgeInsets.symmetric(horizontal: 16),
-
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(14),
               ),
-
               child: TextField(
                 decoration: InputDecoration(
                   border: InputBorder.none,
@@ -110,13 +111,101 @@ class HomeDashboardScreen extends StatelessWidget {
 
             SizedBox(height: 20),
 
-            /// TALK TO LISTENER CARD
+            /// COMMUNITY CARD
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [AppColors.secondary, AppColors.primary],
+                ),
+                borderRadius: BorderRadius.circular(18),
+              ),
+
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// ICON
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.forum, color: Colors.white, size: 26),
+                  ),
+
+                  SizedBox(width: 14),
+
+                  /// TEXT
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              "Community Q&A",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+
+                            Spacer(),
+
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => CommunityScreen(
+                                      nickname: user.nickname,
+                                    ),
+                                  ),
+                                );
+                              },
+
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "See more",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  SizedBox(width: 4),
+                                  Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 14,
+                                    color: Colors.white,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        SizedBox(height: 6),
+
+                        Text(
+                          "Ask questions, share knowledge, support each other",
+                          style: TextStyle(color: Colors.white70),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            SizedBox(height: 18),
+
+            /// TALK TO LISTENER
             GestureDetector(
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => FindListenerScreen(user: user),
+                    builder: (_) => ActiveListenersScreen(speaker: user),
                   ),
                 );
               },
@@ -164,38 +253,89 @@ class HomeDashboardScreen extends StatelessWidget {
               ),
             ),
 
-            SizedBox(height: 28),
+            SizedBox(height: 20),
 
-            /// COMMUNITY TITLE
-            Text(
-              "Community Q&A",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-              ),
-            ),
-            TextButton(child: 
-            Text("See more"),
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(
-                builder: (_) => CommunityScreen(nickname: user.nickname,
-                ),
-                ),
+            /// ACTIVE LISTENERS
+            FutureBuilder(
+              future: DBHelper.getOnlineListeners(),
+
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                if (!snapshot.hasData) {
+                  return SizedBox();
+                }
+
+                final listeners = snapshot.data as List<UserModel>;
+
+                if (listeners.isEmpty) {
+                  return Text(
+                    "No listener available right now",
+                    style: TextStyle(color: AppColors.textSecondary),
+                  );
+                }
+
+                SizedBox(height: 20);
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Active Listeners",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+
+                    SizedBox(height: 20),
+
+                    SizedBox(
+                      height: 70,
+
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: listeners.length,
+
+                        itemBuilder: (context, index) {
+                          final listener = listeners[index];
+
+                          return Container(
+                            margin: EdgeInsets.only(right: 12),
+
+                            child: Column(
+                              children: [
+                                CircleAvatar(
+                                  radius: 22,
+                                  backgroundColor: AppColors.primary,
+                                  child: Text(
+                                    listener.nickname[0].toUpperCase(),
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+
+                                SizedBox(height: 4),
+
+                                Text(
+                                  listener.nickname,
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+
+                    SizedBox(height: 20),
+                  ],
                 );
-            },
+              },
             ),
+           
 
-            SizedBox(height: 4),
-
-            Text(
-              "Ask questions, share knowledge, support each other",
-              style: TextStyle(color: AppColors.textSecondary),
-            ),
-
-            SizedBox(height: 18),
-
-            /// TOPIC CHIPS
+            /// TOPICS
             SizedBox(
               height: 40,
 
@@ -211,7 +351,6 @@ class HomeDashboardScreen extends StatelessWidget {
 
                     decoration: BoxDecoration(
                       color: index == 0 ? AppColors.secondary : Colors.white,
-
                       borderRadius: BorderRadius.circular(20),
                     ),
 
@@ -230,53 +369,17 @@ class HomeDashboardScreen extends StatelessWidget {
 
             SizedBox(height: 20),
 
-            /// DISCUSSION CARD
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => CommunityScreen(
-                      nickname: user.nickname,
-                    ),
-                  ),
-                );
-              },
-              child: buildDiscussionCard(),
-            ),
-
-            SizedBox(height: 14),
-
-             GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => CommunityScreen(
-                      nickname: user.nickname,
-                    ),
-                  ),
-                );
-              },
-              child: buildDiscussionCard(),
-            ),
-
-            SizedBox(height: 30),
-
-            /// ARTICLES TITLE
+            /// ARTICLES
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  "Recommended for You",
-                  style: TextStyle(fontSize: 20),
-                ),
-
+                Text("Recommended for You", style: TextStyle(fontSize: 20)),
+              
                 TextButton(
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => ArticlesScreen()),
+                      MaterialPageRoute(builder: (_) => ArticlesScreen()),
                     );
                   },
                   child: Text("See all"),
@@ -286,7 +389,6 @@ class HomeDashboardScreen extends StatelessWidget {
 
             SizedBox(height: 12),
 
-            /// ARTICLE HORIZONTAL LIST
             SizedBox(
               height: 220,
 
@@ -314,103 +416,6 @@ class HomeDashboardScreen extends StatelessWidget {
             SizedBox(height: 30),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget buildDiscussionCard() {
-    return Container(
-      padding: EdgeInsets.all(18),
-
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
-      ),
-
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-
-        children: [
-          Row(
-            children: [
-              CircleAvatar(
-                backgroundColor: AppColors.secondary,
-                child: Text("S", style: TextStyle(color: Colors.white)),
-              ),
-
-              SizedBox(width: 10),
-
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Sarah J.",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-
-                  Text(
-                    "2h ago",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-
-              Spacer(),
-
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-
-                decoration: BoxDecoration(
-                  color: AppColors.secondary,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-
-                child: Text(
-                  "Career",
-                  style: TextStyle(color: Colors.white, fontSize: 12),
-                ),
-              ),
-            ],
-          ),
-
-          SizedBox(height: 12),
-
-          Text(
-            "How do you manage work-life balance as a working mom?",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          SizedBox(height: 6),
-
-          Text(
-            "I struggle with finding time for myself while managing work and family...",
-            style: TextStyle(color: AppColors.textSecondary),
-          ),
-
-          SizedBox(height: 14),
-
-          Row(
-            children: [
-              Icon(Icons.thumb_up_alt_outlined, size: 18),
-
-              SizedBox(width: 6),
-
-              Text("24"),
-
-              SizedBox(width: 16),
-
-              Icon(Icons.chat_bubble_outline, size: 18),
-
-              SizedBox(width: 6),
-
-              Text("12 answers"),
-            ],
-          ),
-        ],
       ),
     );
   }

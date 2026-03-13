@@ -20,6 +20,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController nicknameController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -118,13 +119,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 /// LOGO
                 Center(
-                  child: Image.asset(
-                    "assets/images/logoHer.png",
-                    width: 150,
-                  ),
+                  child: Image.asset("assets/images/logoHer.png", width: 150),
                 ),
-
-                SizedBox(height: 16),
 
                 /// TITLE
                 Text(
@@ -143,7 +139,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
 
-                SizedBox(height: 24),
+                SizedBox(height: 15),
 
                 /// REGISTER CARD
                 Container(
@@ -261,6 +257,46 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                       SizedBox(height: 15),
 
+                      /// CONFIRM PASSWORD
+                      TextFormField(
+                        controller: confirmPasswordController,
+                        obscureText: obscurePassword,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Confirm password is required";
+                          }
+
+                          if (value != passwordController.text) {
+                            return "Passwords do not match";
+                          }
+
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          hintText: "Confirm Password",
+                          prefixIcon: Icon(Icons.lock_outline),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              obscurePassword
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                obscurePassword = !obscurePassword;
+                              });
+                            },
+                          ),
+                          filled: true,
+                          fillColor: Color(0xFFF5F5F5),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 15),
+
                       /// PHONE
                       TextFormField(
                         controller: phoneController,
@@ -273,8 +309,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           if (value.length < 10) {
                             return "Invalid phone number";
                           }
-
-                    
 
                           return null;
                         },

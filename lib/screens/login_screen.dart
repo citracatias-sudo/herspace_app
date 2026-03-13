@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:herspace_app/decorations/app_colors.dart';
+import 'package:herspace_app/screens/forgot_password_screen.dart';
 import 'package:herspace_app/screens/home_screen.dart';
 import 'package:herspace_app/Listener/listener_dashboard_screen.dart';
 import 'package:herspace_app/widgets/gradient_button.dart';
@@ -36,30 +37,28 @@ class _LoginScreenState extends State<LoginScreen> {
       password: passwordController.text.trim(),
     );
 
-if (login != null) {
-  showMessage("Login success");
+    if (login != null) {
+      showMessage("Login success");
 
-  if (login.role.toLowerCase() == "listener") {
-    // Gunakan pushAndRemoveUntil agar listener tidak bisa back ke login
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-        builder: (_) => ListenerDashboardScreen(user: login),
-      ),
-      (route) => false, // Menghapus semua halaman sebelumnya
-    );
-  } else {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-        builder: (_) => HomeScreen(user: login),
-      ),
-      (route) => false, // Menghapus semua halaman sebelumnya
-    );
-  }
-} else {
-  showMessage("Email or password invalid");
-}
+      if (login.role.toLowerCase() == "listener") {
+        // Gunakan pushAndRemoveUntil agar listener tidak bisa back ke login
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ListenerDashboardScreen(user: login),
+          ),
+          (route) => false, // Menghapus semua halaman sebelumnya
+        );
+      } else {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => HomeScreen(user: login)),
+          (route) => false, // Menghapus semua halaman sebelumnya
+        );
+      }
+    } else {
+      showMessage("Email or password invalid");
+    }
   }
 
   @override
@@ -189,44 +188,66 @@ if (login != null) {
                           ),
                         ),
                       ),
+                      SizedBox(height: 5),
 
-                      SizedBox(height: 24),
+                      /// FORGOT PASSWORD
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ForgotPasswordScreen(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            "Forgot Password?",
+                            style: TextStyle(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: 5),
 
                       /// LOGIN BUTTON
                       GradientButton(text: "Login", onPressed: login),
+                      SizedBox(height: 10),
+
+                      /// SIGN UP
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("Don't have an account? "),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      RegisterScreen(role: 'speaker'),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              "Sign Up",
+                              style: TextStyle(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      SizedBox(height: 40),
                     ],
                   ),
                 ),
-
-                SizedBox(height: 30),
-
-                /// SIGN UP
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("Don't have an account? "),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                RegisterScreen(role: 'speaker'),
-                          ),
-                        );
-                      },
-                      child: Text(
-                        "Sign Up",
-                        style: TextStyle(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                SizedBox(height: 40),
               ],
             ),
           ),

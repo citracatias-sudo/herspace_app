@@ -5,13 +5,21 @@ import '../models/chat_model.dart';
 import '../database/db_helper.dart';
 
 class MessagesScreen extends StatefulWidget {
+  final String roomId;
   final String nickname;
 
-  const MessagesScreen({super.key, required this.nickname});
+  const MessagesScreen({
+    super.key,
+    required this.roomId,
+    required this.nickname,
+  });
 
   @override
   State<MessagesScreen> createState() => _MessagesScreenState();
 }
+
+@override
+State<MessagesScreen> createState() => _MessagesScreenState();
 
 class _MessagesScreenState extends State<MessagesScreen> {
   List<ChatModel> lastMessages = [];

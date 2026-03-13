@@ -4,10 +4,15 @@ import 'package:herspace_app/decorations/app_colors.dart';
 import 'package:herspace_app/models/user_model.dart';
 import 'package:herspace_app/screens/login_screen.dart';
 
-class RoleSelectionScreenHp extends StatelessWidget {
+class RoleSelectionScreenHp extends StatefulWidget {
   final UserModel user;
   const RoleSelectionScreenHp({super.key, required this.user});
 
+  @override
+  State<RoleSelectionScreenHp> createState() => _RoleSelectionScreenHpState();
+}
+
+class _RoleSelectionScreenHpState extends State<RoleSelectionScreenHp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -184,7 +189,7 @@ class RoleSelectionScreenHp extends StatelessWidget {
           content: Text(
             role == "speaker"
                 ? "Please respect others and keep conversations safe and kind."
-                : "As a listener, please respond with empathy and respect.",
+                : "As a listener, you will receive short-training-course and assessment to interact with speakers.",
           ),
 
           actions: [
@@ -206,8 +211,8 @@ class RoleSelectionScreenHp extends StatelessWidget {
               onPressed: () async {
                 Navigator.pop(context);
 
-                if (user.id != null) {
-                  await DBHelper.updateUserRole(user.id!, role);
+                if (widget.user.id != null) {
+                  await DBHelper.updateUserRole(widget.user.id!, role);
                 }
 
                 Navigator.pushAndRemoveUntil(

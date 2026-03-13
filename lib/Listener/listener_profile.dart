@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:herspace_app/database/db_helper.dart';
+import 'package:herspace_app/screens/login_screen.dart';
 import '../models/user_model.dart';
 
 class ListenerProfileHp extends StatefulWidget {
@@ -12,6 +14,12 @@ class ListenerProfileHp extends StatefulWidget {
 
 class _ListenerProfileHpState extends State<ListenerProfileHp> {
   bool isOnline = false;
+  @override
+  void initState() {
+    super.initState();
+
+    isOnline = widget.user.isOnline;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,19 +40,33 @@ class _ListenerProfileHpState extends State<ListenerProfileHp> {
 
                 SizedBox(width: 12),
 
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.user.nickname,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.user.nickname,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
 
-                    Text(widget.user.role),
-                  ],
+                      Text(widget.user.role),
+                    ],
+                  ),
+                ),
+
+                /// LOGOUT BUTTON
+                IconButton(
+                  icon: Icon(Icons.logout),
+                  onPressed: () {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (_) => LoginScreen()),
+                      (route) => false,
+                    );
+                  },
                 ),
               ],
             ),
@@ -52,16 +74,18 @@ class _ListenerProfileHpState extends State<ListenerProfileHp> {
             SizedBox(height: 30),
 
             /// LISTENER SWITCH
-            if (widget.user.role == "listener")
+            if (widget.user.role.toLowerCase() == "listener")
               Card(
                 child: SwitchListTile(
                   title: Text("Available to Listen"),
                   subtitle: Text("Turn on to receive speaker requests"),
                   value: isOnline,
-                  onChanged: (value) {
+                  onChanged: (value) async {
                     setState(() {
                       isOnline = value;
                     });
+
+                    await DBHelper.updateOnlineStatus(widget.user.id!, value);
                   },
                 ),
               ),

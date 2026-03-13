@@ -28,14 +28,14 @@ class _HomeScreenState extends State<HomeScreen> {
     if (widget.user.role == "listener") {
       pages = [
         HomeDashboardScreen(user: widget.user),
-        MessagesScreen(nickname: widget.user.nickname),
+        MessagesScreen(roomId: "general", nickname: widget.user.nickname),
         ProfileScreen(user: widget.user),
         CallScreen(),
       ];
     } else {
       pages = [
         HomeDashboardScreen(user: widget.user),
-        MessagesScreen(nickname: widget.user.nickname),
+        MessagesScreen(roomId: "general", nickname: widget.user.nickname),
         ProfileScreen(user: widget.user),
         CallScreen(),
         MoodTrackerScreen(),
@@ -46,10 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: selectedIndex,
-        children: pages,
-      ),
+      body: IndexedStack(index: selectedIndex, children: pages),
 
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,

@@ -1,18 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:herspace_app/decorations/app_colors.dart';
+import 'package:herspace_app/screens/community_scree.dart';
 import 'package:herspace_app/screens/messages_screen.dart';
+import 'package:herspace_app/database/db_helper.dart';
+import 'package:herspace_app/screens/login_screen.dart';
 import '../models/user_model.dart';
 
-class ListenerDashboardScreen extends StatelessWidget {
+class ListenerDashboardScreen extends StatefulWidget {
   final UserModel user;
 
   const ListenerDashboardScreen({super.key, required this.user});
 
   @override
+  State<ListenerDashboardScreen> createState() =>
+      _ListenerDashboardScreenState();
+}
+
+class _ListenerDashboardScreenState extends State<ListenerDashboardScreen> {
+  bool isOnline = false;
+
+  @override
+  void initState() {
+    super.initState();
+    isOnline = widget.user.isOnline;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final user = widget.user;
+
     return Scaffold(
       backgroundColor: AppColors.background,
-
       appBar: AppBar(title: Text("Listener Dashboard"), centerTitle: true),
 
       body: SingleChildScrollView(
@@ -28,7 +46,6 @@ class ListenerDashboardScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(22),
-
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black12,
@@ -40,6 +57,7 @@ class ListenerDashboardScreen extends StatelessWidget {
 
               child: Row(
                 children: [
+                  /// AVATAR
                   Stack(
                     children: [
                       CircleAvatar(
@@ -53,48 +71,87 @@ class ListenerDashboardScreen extends StatelessWidget {
                         ),
                       ),
 
-                      Positioned(
-                        right: 0,
-                        bottom: 0,
-                        child: Container(
-                          height: 14,
-                          width: 14,
-                          decoration: BoxDecoration(
-                            color: Colors.green,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 2),
+                      /// ONLINE DOT
+                      if (isOnline)
+                        Positioned(
+                          right: 0,
+                          bottom: 0,
+                          child: Container(
+                            height: 14,
+                            width: 14,
+                            decoration: BoxDecoration(
+                              color: Colors.green,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 2),
+                            ),
                           ),
                         ),
-                      ),
                     ],
                   ),
 
                   SizedBox(width: 16),
 
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Welcome back",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-
-                      Text(
-                        user.nickname,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                  /// USER INFO + TOGGLE
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Welcome back",
+                          style: TextStyle(color: Colors.grey),
                         ),
-                      ),
 
-                      Text(
-                        "Listener",
-                        style: TextStyle(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w500,
+                        Text(
+                          user.nickname,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    ],
+
+                        Text(
+                          "Listener",
+                          style: TextStyle(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+
+                        SizedBox(height: 6),
+
+                        Row(
+                          children: [
+                            Text("Available to Listen"),
+
+                            Switch(
+                              value: isOnline,
+                              onChanged: (value) async {
+                                setState(() {
+                                  isOnline = value;
+                                });
+
+                                await DBHelper.updateOnlineStatus(
+                                  user.id!,
+                                  value,
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  /// LOGOUT
+                  IconButton(
+                    icon: Icon(Icons.logout),
+                    onPressed: () {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (_) => LoginScreen()),
+                        (route) => false,
+                      );
+                    },
                   ),
                 ],
               ),
@@ -161,20 +218,33 @@ class ListenerDashboardScreen extends StatelessWidget {
 
             SizedBox(height: 12),
 
-            conversationCard(
-              context,
-              "GentleRose",
-              "I feel really overwhelmed today...",
-              "room_rose",
-            ),
+            FutureBuilder(
+              future: DBHelper.getListenerRooms(user.id!),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return CircularProgressIndicator();
+                }
 
-            conversationCard(
-              context,
-              "SoftSky",
-              "Thank you for listening yesterday",
-              "room_sky",
-            ),
+                final rooms = snapshot.data as List<Map<String, dynamic>>;
 
+                if (rooms.isEmpty) {
+                  return Text("No conversations yet");
+                }
+
+                return Column(
+                  children: rooms.map((room) {
+                    String roomId = room["roomId"];
+
+                    return conversationCard(
+                      context,
+                      "Speaker",
+                      "Tap to open chat",
+                      roomId,
+                    );
+                  }).toList(),
+                );
+              },
+            ),
             SizedBox(height: 30),
 
             /// QUICK ACTIONS
@@ -191,7 +261,6 @@ class ListenerDashboardScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
-
                 boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
               ),
 
@@ -200,13 +269,13 @@ class ListenerDashboardScreen extends StatelessWidget {
                   ListTile(
                     leading: Icon(Icons.public),
                     title: Text("Community Chat"),
-
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => MessagesScreen(
-                            nickname: user.nickname,
+                            roomId: "general",
+                            nickname: widget.user.nickname,
                           ),
                         ),
                       );
@@ -242,7 +311,6 @@ class ListenerDashboardScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
-
         boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
       ),
 
@@ -271,17 +339,13 @@ class ListenerDashboardScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
-
         boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
       ),
 
       child: ListTile(
         leading: CircleAvatar(child: Icon(Icons.person_outline)),
-
         title: Text(name),
-
         subtitle: Text("Waiting for a listener"),
-
         trailing: ElevatedButton(onPressed: () {}, child: Text("Accept")),
       ),
     );
@@ -300,26 +364,21 @@ class ListenerDashboardScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
-
         boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
       ),
 
       child: ListTile(
         leading: CircleAvatar(child: Text(name.substring(0, 1))),
-
         title: Text(name),
-
         subtitle: Text(preview, maxLines: 1, overflow: TextOverflow.ellipsis),
-
         trailing: Icon(Icons.arrow_forward_ios, size: 16),
 
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => MessagesScreen(
-                nickname: user.nickname,
-              ),
+              builder: (context) =>
+                  CommunityScreen(nickname: widget.user.nickname),
             ),
           );
         },
